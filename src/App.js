@@ -1,11 +1,14 @@
-import React from 'react';
+import React from 'react'
+import SubscriptionForm from './components/form/SubscriptionForm'
+import './assets/style/main.scss'
 
-function App() {
+
+const App = () => {
   return (
     <div className="App">
-      <h1>App</h1>
+      <SubscriptionForm />
     </div>
-  );
+  )
 }
 
-export default App;
+export default App

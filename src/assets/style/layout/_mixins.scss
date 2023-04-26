@@ -1,0 +1,22 @@
+@mixin respond-to($breakpoint) {
+  // If the key exists in the map
+  @if map-has-key($breakpoints, $breakpoint) {
+    // Prints a media query based on the value
+    @media #{inspect(map-get($breakpoints, $breakpoint))} {
+      @content;
+    }
+  }
+  // If the key doesn't exist in the map
+  @else {
+    @warn "Unfortunately, no value could be retrieved from `#{$breakpoint}`. "
+        + "Available breakpoints are: #{map-keys($breakpoints)}.";
+  }
+}
+
+// Designed for mobile first so default styles only apply to screens with a max-width of 767
+$breakpoints: (
+  'mobile': ( max-width: 980 ),
+  'tablet':  ( min-width:  768px ),
+  'desktop': ( min-width:  1023px ),
+  'lg-desktop':  ( min-width: 1408px )
+) !default;

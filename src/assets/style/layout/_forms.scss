@@ -1,0 +1,63 @@
+.card {
+	border: .25px $primaryText solid;
+	border-radius: .5rem;
+	max-width: 95%;
+	margin: auto;
+	margin-top: 2rem;
+	margin-bottom: 2rem;
+	@include respond-to('tablet') {
+		max-width: 80%;
+  }
+	@include respond-to('desktop') {
+		max-width: 60%;
+  }
+	@include respond-to('lg-desktop') {
+		max-width: 50%;
+  }
+  li {
+    list-style: none;
+  }
+}
+.input-row {
+  justify-content: space-between;
+}
+
+.card-header {
+	color: $primaryText;
+
+}
+.card-body {
+  @include respond-to('desktop') {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 95%;
+    margin: auto;
+  }
+}
+
+.form-control-lg {
+	padding: .35rem;
+  margin-top: .5rem;
+	border: .5px $primaryText solid;
+	border-radius: .5rem;
+	color: $primaryText;
+  @include respond-to('lg-desktop') {
+    padding: .5rem;
+    margin-top: .5rem;
+  }
+  @include respond-to('desktop') {
+    padding: .5rem;
+    margin-top: .75rem;
+  }
+  @include respond-to('lg-desktop') {
+    padding: .75rem;
+    margin-top: 1rem;
+  }
+}
+form {
+  @include respond-to('desktop') {
+    width: 100%;
+  }
+}
+
