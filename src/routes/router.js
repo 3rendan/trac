@@ -1,8 +1,9 @@
 import * as React from 'react'
 import { createBrowserRouter } from 'react-router-dom'
-import RootLayout from './RootLayout'
-import ErrorPage from './routes/ErrorPage'
-import SubscriptionForm from '../form/SubscriptionForm'
+import RootLayout from '../RootLayout'
+import ErrorPage from './ErrorPage'
+import SubscriptionForm from '../components/form/SubscriptionForm'
+import CarriageService from '../components/CarriageService'
 
 const router = createBrowserRouter([
   {
@@ -11,8 +12,12 @@ const router = createBrowserRouter([
     children: [
       {
         path: '/',
-        element: <SubscriptionForm />,
+        element: <CarriageService />,
         errorElement: <ErrorPage />,
+      },
+      {
+        path: '/form',
+        element: <SubscriptionForm />
       }
     ]
   }

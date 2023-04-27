@@ -27,32 +27,33 @@
 
 }
 .card-body {
-  @include respond-to('desktop') {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    width: 95%;
-    margin: auto;
+  display: block;
+  .form-grid {
+    @include respond-to('desktop') {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      .form-control-lg {
+        width: 95%;
+      }
+    }
   }
 }
 
 .form-control-lg {
+  width: 95%;
 	padding: .35rem;
-  margin-top: .5rem;
+  margin: .5rem;
 	border: .5px $primaryText solid;
 	border-radius: .5rem;
 	color: $primaryText;
-  @include respond-to('lg-desktop') {
-    padding: .5rem;
-    margin-top: .5rem;
-  }
   @include respond-to('desktop') {
+    width: 40%;
     padding: .5rem;
-    margin-top: .75rem;
+    margin: .75rem;
   }
   @include respond-to('lg-desktop') {
     padding: .75rem;
-    margin-top: 1rem;
+    margin: 1rem;
   }
 }
 form {

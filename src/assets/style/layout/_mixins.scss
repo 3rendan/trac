@@ -15,7 +15,6 @@
 
 // Designed for mobile first so default styles only apply to screens with a max-width of 767
 $breakpoints: (
-  'mobile': ( max-width: 980 ),
   'tablet':  ( min-width:  768px ),
   'desktop': ( min-width:  1023px ),
   'lg-desktop':  ( min-width: 1408px )

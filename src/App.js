@@ -1,12 +1,15 @@
 import React from 'react'
-import SubscriptionForm from './components/form/SubscriptionForm'
+import { RouterProvider } from 'react-router-dom'
+import router from './routes/router'
+import { ToastContainer } from 'react-toastify'
 import './assets/style/main.scss'
 
 
 const App = () => {
   return (
     <div className="App">
-      <SubscriptionForm />
+      <RouterProvider router={router} />
+      <ToastContainer />
     </div>
   )
 }

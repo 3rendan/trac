@@ -1,0 +1,31 @@
+.faq-links {
+  list-style-type: none;
+  a {
+    color: $primaryBackground;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: larger;
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
+.fw-bolder {
+  color: $primaryBackground;
+}
+.faq-answers {
+  li {
+    list-style: none;
+  }
+  h4 {
+    color: $primaryBackground;
+    margin: 1rem;
+  }
+  .fst-italic {
+    margin: 1rem;
+  }
+}
+.faq-title-row {
+  color: $primaryBackground;
+  margin-top: 2rem;
+}

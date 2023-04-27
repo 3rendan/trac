@@ -1,4 +1,6 @@
-import { useState, useContext } from 'react'
+import { useEffect, useState, useContext } from 'react'
+import { toast } from 'react-toastify'
+import "react-toastify/dist/ReactToastify.css";
 import { useTracsContext } from '../../hooks/useTracsContext'
 import ProgramsContext from '../../context/ProgramsContext'
 
@@ -6,7 +8,9 @@ const SubscriptionForm = () => {
   const { dispatch } = useTracsContext()
   const { programs } = useContext(ProgramsContext)
   const [ error, setError ] = useState(false)
-  const [ termsAccepted, setTermsAccepted ] = useState(false)
+  const [ isValid, setIsValid ] = useState(false)
+  const [ enableButton, setEnableButton ] = useState(false)
+  const [ termsOfUse, setTermsOfUse ] = useState(false)
   const [ formData, setFormData ] = useState({
     program: '',
     subscriberName: '',
@@ -33,9 +37,18 @@ const SubscriptionForm = () => {
     }))
   } 
 
+ useEffect(() => {
+  if (formData !== null) {
+    setIsValid(Object.values(formData).every((value) => value !== ""));
+  }
+  if(termsOfUse && isValid) {
+    setEnableButton(!enableButton)
+  }
+  }, [formData])
+
   const handleNew =  async (e) => {
     e.preventDefault()
-    const trac = {...formData }
+    const trac = {...formData, termsOfUse }
     const res = await fetch('/api/tracs', {
       method: 'POST',
       body: JSON.stringify(trac), 
@@ -45,11 +58,31 @@ const SubscriptionForm = () => {
     })
     const json = await res.json()
     if(!res.ok){
-      setError(json.error)
+      toast.error(json.error, {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+        });
     }
     if(res.ok) {
       dispatch({type: 'CREATE_TRAC', payload: json })
-      window.location.reload()
+      toast.success('Your registration was submitted successfully, we will be in touch.', {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+        });
+      setEnableButton(!enableButton)
+      setTimeout(function() {window.location.reload()}, 6000)
     }  
   }
   
@@ -62,8 +95,8 @@ const SubscriptionForm = () => {
         <h3 className='text-center'>Subscribe to TRAC Carriage reports</h3>
       </div>
       <div className='card-body'>
-        <form onSubmit={handleNew}>
-          <div className="d-flex input-row">
+        <form onSubmit={handleNew}>  
+          <section className="form-grid">      
             <input
               className='form-control-lg'
               id='program'
@@ -91,8 +124,7 @@ const SubscriptionForm = () => {
               maxLength='32'
               required  
             />
-          </div>
-          <div className="d-flex input-row">
+          
             <input
               className='form-control-lg'
               type='text'
@@ -113,8 +145,7 @@ const SubscriptionForm = () => {
               maxLength='32'
               required  
             />
-          </div>
-          <div className="d-flex input-row">
+          
           <input
             className='form-control-lg'
             type='text'
@@ -123,7 +154,7 @@ const SubscriptionForm = () => {
             value={formData.email}
             onChange={onMutate}
             maxLength='32'
-            required  
+            required 
           />
           <input
             className='form-control-lg'
@@ -133,7 +164,7 @@ const SubscriptionForm = () => {
             value={formData.period}
             onChange={onMutate}
             maxLength='32'
-            required  
+            required 
           />
           <datalist id="tracPeriod">
             <option value='1 Month' />
@@ -144,8 +175,7 @@ const SubscriptionForm = () => {
             <option value='6 Month' />
             <option value='1 Year' />
           </datalist>
-          </div>
-          <div className="d-flex input-row">
+          
           <input
             className='form-control-lg'
             type='text'
@@ -154,22 +184,23 @@ const SubscriptionForm = () => {
             value={formData.startDate}
             onChange={onMutate}
             maxLength='32'
-            required  
+            required
           />
           <div className='form-check terms-check mx-auto'>
-            <input className='form-check-input' type='checkbox' value={termsAccepted} id='termsOfUse' onClick={() => setTermsAccepted(!termsAccepted)}/>
+            <input className='form-check-input' type='checkbox' value={termsOfUse} id='termsOfUse' onClick={ isValid ? () => setTermsOfUse(!termsOfUse) : console.log('working') }/>
             <label className='form-check-label text-nowrap' htmlFor='termsOfUse'>
               Acknowledgement of Terms
             </label>
           </div>
-          </div>
+          </section>
           <div className="submit-btn">
-            <button className='btn' type='submit' disabled={!termsAccepted}>
+            {console.log(enableButton)}
+            <button className='btn' type='submit' disabled={!termsOfUse}>
               Register
             </button>
           </div>
         </form>
-        </div>
+      </div>
       <div className='card-footer'>
         <h3 className='text-center'>FYI</h3>
         <ul>
