@@ -18,14 +18,15 @@
     list-style: none;
   }
 }
+
 .input-row {
   justify-content: space-between;
 }
 
 .card-header {
 	color: $primaryText;
-
 }
+
 .card-body {
   display: block;
   .form-grid {
@@ -56,6 +57,7 @@
     margin: 1rem;
   }
 }
+
 form {
   @include respond-to('desktop') {
     width: 100%;

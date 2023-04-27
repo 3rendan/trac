@@ -27,6 +27,7 @@
 		width: 60%;
   }
 }
+
 .submit-btn {
   margin: .25rem 0;
   @include respond-to('tablet') {
@@ -39,6 +40,7 @@
     margin: .55rem 0;
   }
 }
+
 .terms-check {
   max-width: 200px; 
   margin-top: .75rem; 

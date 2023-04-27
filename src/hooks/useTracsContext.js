@@ -8,6 +8,5 @@ export const useTracsContext = () => {
     throw Error('You are outside of the context')
   }
 
-
   return context
 }
