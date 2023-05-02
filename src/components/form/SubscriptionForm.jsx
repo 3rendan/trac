@@ -10,6 +10,8 @@ const SubscriptionForm = () => {
   const [ isValid, setIsValid ] = useState(false)
   const [ enableButton, setEnableButton ] = useState(false)
   const [ termsOfUse, setTermsOfUse ] = useState(false)
+  const termsCheckbox = document.querySelector('#termsOfUse')
+
   const [ formData, setFormData ] = useState({
     program: '',
     subscriberName: '',
@@ -78,18 +80,27 @@ const SubscriptionForm = () => {
     }
     if(res.ok) {
       dispatch({type: 'CREATE_TRAC', payload: json })
-      toast.success('Your registration was submitted successfully, we will be in touch.', {
+      setFormData({
+        program: '',
+        subscriberName: '',
+        title: '',
+        phone: '',
+        email: '',
+        period: '',
+        startDate: ''
+      })
+      setTermsOfUse(false)
+      termsCheckbox.checked = false
+      toast.success('Your registration was submitted successfully, we will be in touch in 2-3 business days.', {
         position: 'top-center',
-        autoClose: 5000,
-        hideProgressBar: false,
+        autoClose: false,
+        hideProgressBar: true,
         closeOnClick: true,
         pauseOnHover: true,
         draggable: true,
         progress: undefined,
         theme: 'colored',
-        });
-      setEnableButton(!enableButton)
-      setTimeout(function() {window.location.reload()}, 6000)
+      })     
     }  
   }
   
