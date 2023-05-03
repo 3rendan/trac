@@ -13,29 +13,22 @@ const SubscriptionForm = () => {
   const termsCheckbox = document.querySelector('#termsOfUse')
 
   const [ formData, setFormData ] = useState({
-    program: '',
-    subscriberName: '',
-    title: '',
-    phone: '',
-    email: '',
-    period: '',
-    startDate: ''
+    ProgramID: '',
+    RequesterName: '',
+    RequesterTitle: '',
+    RequesterPhone: '',
+    RequesterEmail: '',
+    Period: '',
+    StartDate: ''
   })
   const {
-    // eslint-disable-next-line
-    program,
-    // eslint-disable-next-line
-    subscriberName,
-    // eslint-disable-next-line
-    title,
-    // eslint-disable-next-line
-    phone,
-    // eslint-disable-next-line
-    email,
-    // eslint-disable-next-line
-    period,
-    // eslint-disable-next-line
-    startDate
+    ProgramID,
+    RequesterName,
+    RequesterTitle,
+    RequesterPhone,
+    RequesterEmail,
+    Period,
+    StartDate
   } = formData
 
   const onMutate = (e) => {
@@ -57,51 +50,7 @@ const SubscriptionForm = () => {
 
   const handleNew =  async (e) => {
     e.preventDefault()
-    const trac = {...formData, termsOfUse }
-    const res = await fetch('/api/tracs', {
-      method: 'POST',
-      body: JSON.stringify(trac), 
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    })
-    const json = await res.json()
-    if(!res.ok){
-      toast.error(json.error, {
-        position: 'top-center',
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: 'colored',
-      });
-    }
-    if(res.ok) {
-      dispatch({type: 'CREATE_TRAC', payload: json })
-      setFormData({
-        program: '',
-        subscriberName: '',
-        title: '',
-        phone: '',
-        email: '',
-        period: '',
-        startDate: ''
-      })
-      setTermsOfUse(false)
-      termsCheckbox.checked = false
-      toast.success('Your registration was submitted successfully, we will be in touch in 2-3 business days.', {
-        position: 'top-center',
-        autoClose: false,
-        hideProgressBar: true,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: 'colored',
-      })     
-    }  
+    console.log(formData) 
   }
   
   if (programs === undefined) {
@@ -118,27 +67,20 @@ const SubscriptionForm = () => {
           <section className='form-grid'>      
             <input
               className='form-control-lg'
-              id='program'
+              id='ProgramID'
               list='programList'
               placeholder='Type to search...'
-              value={formData.program}
+              value={formData.ProgramID}
               onChange={onMutate}
               maxLength='32'
               required  
-            />
-            <datalist id='programList'>
-              { programs && programs.map((program) => {
-                return (
-                  <option key={program._id} value={program.programtitle} />
-                )
-              })}
-            </datalist>
+            /> 
             <input
               className='form-control-lg'
               type='text'
-              id='subscriberName'
+              id='RequesterName'
               placeholder={`Subscriber's Name`}
-              value={formData.subscriberName}
+              value={formData.RequesterName}
               onChange={onMutate}
               maxLength='32'
               required  
@@ -146,9 +88,9 @@ const SubscriptionForm = () => {
             <input
               className='form-control-lg'
               type='text'
-              id='title'
+              id='RequesterTitle'
               placeholder={`Subscriber's title`}
-              value={formData.title}
+              value={formData.RequesterTitle}
               onChange={onMutate}
               maxLength='32'
               required  
@@ -156,9 +98,9 @@ const SubscriptionForm = () => {
             <input
               className='form-control-lg'
               type='text'
-              id='phone'
+              id='RequesterPhone'
               placeholder={`Subscriber's phone number`}
-              value={formData.phone}
+              value={formData.RequesterPhone}
               onChange={onMutate}
               maxLength='32'
               required  
@@ -166,19 +108,19 @@ const SubscriptionForm = () => {
             <input
               className='form-control-lg'
               type='text'
-              id='email'
+              id='RequesterEmail'
               placeholder={`Subscriber's email`}
-              value={formData.email}
+              value={formData.RequesterEmail}
               onChange={onMutate}
               maxLength='32'
               required 
             />
             <input
               className='form-control-lg'
-              id='period'
+              id='Period'
               list='tracPeriod'
               placeholder='Subscription Period'
-              value={formData.period}
+              value={formData.Period}
               onChange={onMutate}
               maxLength='32'
               required 
@@ -195,9 +137,9 @@ const SubscriptionForm = () => {
             <input
               className='form-control-lg'
               type='text'
-              id='startDate'
+              id='StartDate'
               placeholder='Start Date'
-              value={formData.startDate}
+              value={formData.StartDate}
               onChange={onMutate}
               maxLength='32'
               required
