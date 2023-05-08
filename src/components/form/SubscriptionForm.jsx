@@ -3,40 +3,46 @@ import { toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css';
 import { useTracsContext } from '../../hooks/useTracsContext'
 import ProgramsContext from '../../context/ProgramsContext'
+import Terms from './Terms'
+import { Modal } from 'react-bootstrap'
+import Alert from 'react-bootstrap/Alert'
 
 const SubscriptionForm = () => {
   const { dispatch } = useTracsContext()
   const { programs } = useContext(ProgramsContext)
   const [ isValid, setIsValid ] = useState(false)
   const [ enableButton, setEnableButton ] = useState(false)
+  const [ show, setShow ] = useState(false)
   const [ termsOfUse, setTermsOfUse ] = useState(false)
-  const termsCheckbox = document.querySelector('#termsOfUse')
 
   const [ formData, setFormData ] = useState({
     ProgramID: '',
-    RequesterName: '',
-    RequesterTitle: '',
-    RequesterPhone: '',
-    RequesterEmail: '',
+    RequestorName: '',
+    RequestorCompany: '',
+    RequestorTitle: '',
+    RequestorPhone: '',
+    RequestorEmail: '',
     Period: '',
     StartDate: ''
   })
   const {
+    // eslint-disable-next-line
     ProgramID,
-    RequesterName,
-    RequesterTitle,
-    RequesterPhone,
-    RequesterEmail,
+    // eslint-disable-next-line
+    RequestorName,
+    // eslint-disable-next-line
+    RequestorCompany,
+    // eslint-disable-next-line
+    RequestorTitle,
+    // eslint-disable-next-line
+    RequestorPhone,
+    // eslint-disable-next-line
+    RequestorEmail,
+    // eslint-disable-next-line
     Period,
+    // eslint-disable-next-line
     StartDate
   } = formData
-
-  const onMutate = (e) => {
-    setFormData((prevState) => ({
-      ...prevState,
-      [e.target.id]: e.target.value
-    }))
-  } 
 
   useEffect(() => {
     if (formData !== null) {
@@ -48,9 +54,47 @@ const SubscriptionForm = () => {
     // eslint-disable-next-line
   }, [formData])
 
+  const onMutate = (e) => {
+    setFormData((prevState) => ({
+      ...prevState,
+      [e.target.id]: e.target.value
+    }))
+  } 
+
+  const agreeAndClose = () => {
+    setShow(false)
+    setTermsOfUse(true)
+  }
+
   const handleNew =  async (e) => {
     e.preventDefault()
-    console.log(formData) 
+    const trac = {...formData }
+    console.log(trac)
+    const res = await fetch('api/tracs', {
+      method: 'POST',
+      body: JSON.stringify(trac), 
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
+    const json = await res.json()
+    if(!res.ok){
+      toast.error(json.error)
+    }
+    if(res.ok) {
+      dispatch({type: 'CREATE_TRAC', payload: json })
+      setFormData({
+        ProgramID: '',
+        RequestorName: '',
+        RequestorTitle: '',
+        RequestorPhone: '',
+        RequestorEmail: '',
+        Period: '',
+        StartDate: ''
+      })
+      setTermsOfUse(false)
+      toast.success('You have successfully submitted your carriage service request and will recieve a response in 2 to 3 days.')
+    } 
   }
   
   if (programs === undefined) {
@@ -78,9 +122,9 @@ const SubscriptionForm = () => {
             <input
               className='form-control-lg'
               type='text'
-              id='RequesterName'
+              id='RequestorName'
               placeholder={`Subscriber's Name`}
-              value={formData.RequesterName}
+              value={formData.RequestorName}
               onChange={onMutate}
               maxLength='32'
               required  
@@ -88,9 +132,19 @@ const SubscriptionForm = () => {
             <input
               className='form-control-lg'
               type='text'
-              id='RequesterTitle'
+              id='RequestorCompany'
+              placeholder={`Subscriber's Company`}
+              value={formData.RequestorCompany}
+              onChange={onMutate}
+              maxLength='32'
+              required  
+            />         
+            <input
+              className='form-control-lg'
+              type='text'
+              id='RequestorTitle'
               placeholder={`Subscriber's title`}
-              value={formData.RequesterTitle}
+              value={formData.RequestorTitle}
               onChange={onMutate}
               maxLength='32'
               required  
@@ -98,9 +152,9 @@ const SubscriptionForm = () => {
             <input
               className='form-control-lg'
               type='text'
-              id='RequesterPhone'
+              id='RequestorPhone'
               placeholder={`Subscriber's phone number`}
-              value={formData.RequesterPhone}
+              value={formData.RequestorPhone}
               onChange={onMutate}
               maxLength='32'
               required  
@@ -108,9 +162,9 @@ const SubscriptionForm = () => {
             <input
               className='form-control-lg'
               type='text'
-              id='RequesterEmail'
+              id='RequestorEmail'
               placeholder={`Subscriber's email`}
-              value={formData.RequesterEmail}
+              value={formData.RequestorEmail}
               onChange={onMutate}
               maxLength='32'
               required 
@@ -144,28 +198,32 @@ const SubscriptionForm = () => {
               maxLength='32'
               required
             />
-            <div className='form-check terms-check mx-auto'>
-              <input className='form-check-input' type='checkbox' value={termsOfUse} id='termsOfUse' onClick={ isValid ? () => setTermsOfUse(!termsOfUse) : console.log('working') }/>
-              <label className='form-check-label text-nowrap' htmlFor='termsOfUse'>
-                Acknowledgement of Terms
-              </label>
-            </div>
             </section>
+            <div className="text-center">
+              <span className='tou-modal-link' onClick={() => setShow(true)}>
+                Terms of Use
+              </span>
+            </div>
+              <Modal
+                show={show}
+                onHide={() => setShow(false)}
+                id='tou'
+                scrollable='true'
+              >
+                <Terms company={formData.RequestorCompany}/>
+                <Modal.Footer>
+                  <button className='btn-tou' onClick={() => agreeAndClose()}>Agree</button>
+                </Modal.Footer>
+              </Modal>
             <div className='submit-btn'>
-              <button className='btn' type='submit' disabled={!termsOfUse}>
+              <button className='btn-trac' type='submit' disabled={!termsOfUse}>
                 Register
               </button>
+              <div className="text-center mt-2">
+                <small className='fst-italic'>You must fill in all fields and agree to the Terms of Use to submit a request.</small>
+              </div>
             </div>
           </form>
-        </div>
-        <div className='card-footer'>
-          <h3 className='text-center'>FYI</h3>
-          <ul>
-            <li>We regret that we cannot offer immediate TRAC report subscriptions. For security reasons we ask you to log a request for your intended subscription by offering the information we request at left.</li>
-            <li>Please fill every field and click 'Submit' below. We'll review your information within 2-3 business days and either approve or reject your request.</li>
-            <li>In either case you will be contacted by email so please supply a correct email address. You will receive an email detailing either the acceptance or rejection of your request.</li>
-            <li>If your request is accepted, you will be supplied a payment URL. You must then visit this URL in order to provide your payment.</li>
-          </ul>
         </div>
       </div>
   )

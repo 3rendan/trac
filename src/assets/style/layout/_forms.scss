@@ -5,14 +5,10 @@
 	margin: auto;
 	margin-top: 2rem;
 	margin-bottom: 2rem;
-	@include respond-to('tablet') {
-		max-width: 80%;
-  }
 	@include respond-to('desktop') {
-		max-width: 60%;
-  }
-	@include respond-to('lg-desktop') {
-		max-width: 50%;
+		width: 100%;
+    margin-left: 0;
+    margin-right: 0;
   }
   li {
     list-style: none;
@@ -63,4 +59,32 @@ form {
     width: 100%;
   }
 }
+
+#tou {
+  max-height: 80vh;
+}
+
+.modal-footer {
+  display: inline;
+  margin: auto;
+  border-top: none;
+}
+.tou-modal-link {
+  font-weight: 800;
+  font-size: 1.5rem;
+  color: $primaryBackground;
+}
+
+.Toastify__toast-container {
+  width: 70vw;
+  font-size: 2rem;
+}
+
+.desktop-grid {
+  @include respond-to('desktop') {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+  }
+}
+
 

@@ -8,7 +8,14 @@ const App = () => {
   return (
     <div className='App'>
       <RouterProvider router={router} />
-      <ToastContainer />
+      <ToastContainer
+        position='top-center'
+        autoClose={false}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        theme="colored" />
     </div>
   )
 }

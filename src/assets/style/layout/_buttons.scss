@@ -1,31 +1,39 @@
-.btn {
-	width: 90%;
-	margin: auto;
-	background-color: $primaryBackground;
-	color: #000;
-	border-radius: .5rem;
-	display: block;
+.btn-trac, .btn-tou {
+  display: block;
+  border-radius: .5rem;
   margin: auto;
+  box-shadow: #000 0.25em 0.25em 0.15em;
 	padding: .25rem;
-	box-shadow: #000 0.25em 0.25em 0.15em;
-	text-transform: uppercase;
-  color: white;
   font-weight: 800;
   a {
     text-decoration: none;
   }
 	@include respond-to('tablet') {
 		padding: .45rem;
-		width: 75%;
   }
 	@include respond-to('desktop') {
 		padding: .55rem;
-		width: 65%;
   }
 	@include respond-to('lg-desktop') {
 		padding: .65rem;
-		width: 60%;
   }
+}
+
+.btn-trac {
+	width: 90%;
+	background-color: $primaryBackground;
+	text-transform: uppercase;
+  color: white;
+  &:disabled {
+    background-color: white;
+    color: $primaryBackground;
+  }
+}
+
+.btn-tou {
+  word-wrap: nowrap;
+  background-color: $primaryPop;
+  color: $primaryBackground;
 }
 
 .submit-btn {
