@@ -4,7 +4,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { useTracsContext } from '../../hooks/useTracsContext'
 import ProgramsContext from '../../context/ProgramsContext'
 import Terms from './Terms'
-import { Modal } from 'react-bootstrap'
+import { Modal, Card } from 'react-bootstrap'
 import Alert from 'react-bootstrap/Alert'
 
 const SubscriptionForm = () => {
@@ -102,11 +102,11 @@ const SubscriptionForm = () => {
   }
 
   return (
-    <div className='card'>
-      <div className='card-header'>
+    <Card>
+      <Card.Header>
         <h3 className='text-center'>Subscribe to TRAC Carriage reports</h3>
-      </div>
-      <div className='card-body'>
+      </Card.Header>
+      <Card.Body>
         <form onSubmit={handleNew}>  
           <section className='form-grid'>      
             <input
@@ -220,12 +220,12 @@ const SubscriptionForm = () => {
                 Register
               </button>
               <div className="text-center mt-2">
-                <small className='fst-italic'>You must fill in all fields and agree to the Terms of Use to submit a request.</small>
+  /home/brendan/GitHub/trac/src/components/layout              <small className='fst-italic'>You must fill in all fields and agree to the Terms of Use to submit a request.</small>
               </div>
             </div>
           </form>
-        </div>
-      </div>
+        </Card.Body>
+      </Card>
   )
 }
 
