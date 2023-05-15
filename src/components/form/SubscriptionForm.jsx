@@ -4,8 +4,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { useTracsContext } from '../../hooks/useTracsContext'
 import ProgramsContext from '../../context/ProgramsContext'
 import Terms from './Terms'
-import { Modal, Card } from 'react-bootstrap'
-import Alert from 'react-bootstrap/Alert'
+import { Modal, Card, Button } from 'react-bootstrap'
 
 const SubscriptionForm = () => {
   const { dispatch } = useTracsContext()
@@ -199,7 +198,7 @@ const SubscriptionForm = () => {
               required
             />
             </section>
-            <div className="text-center">
+            <div className="text-center mt-1 mb-1">
               <span className='tou-modal-link' onClick={() => setShow(true)}>
                 Terms of Use
               </span>
@@ -211,16 +210,14 @@ const SubscriptionForm = () => {
                 scrollable='true'
               >
                 <Terms company={formData.RequestorCompany}/>
-                <Modal.Footer>
-                  <button className='btn-tou' onClick={() => agreeAndClose()}>Agree</button>
+                <Modal.Footer className='d-grid'>
+                  <Button onClick={() => agreeAndClose()}>Agree</Button>
                 </Modal.Footer>
               </Modal>
-            <div className='submit-btn'>
-              <button className='btn-trac' type='submit' disabled={!termsOfUse}>
-                Register
-              </button>
+            <div className='d-grid'>
+              <Button type='submit' disabled={!termsOfUse}>Register</Button>
               <div className="text-center mt-2">
-  /home/brendan/GitHub/trac/src/components/layout              <small className='fst-italic'>You must fill in all fields and agree to the Terms of Use to submit a request.</small>
+                <small className='fst-italic'>You must fill in all fields and agree to the Terms of Use to submit a request.</small>
               </div>
             </div>
           </form>
