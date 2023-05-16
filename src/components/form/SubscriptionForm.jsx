@@ -6,7 +6,7 @@ import ProgramsContext from '../../context/ProgramsContext'
 
 const SubscriptionForm = () => {
   const { dispatch } = useTracsContext()
-  const { programs } = useContext(ProgramsContext)
+  // const { programs } = useContext(ProgramsContext)
   const [ isValid, setIsValid ] = useState(false)
   const [ enableButton, setEnableButton ] = useState(false)
   const [ termsOfUse, setTermsOfUse ] = useState(false)
@@ -55,47 +55,22 @@ const SubscriptionForm = () => {
 
   const handleNew =  async (e) => {
     e.preventDefault()
-    const trac = {...formData, termsOfUse }
-    const res = await fetch('/api/tracs', {
-      method: 'POST',
-      body: JSON.stringify(trac), 
-      headers: {
-        'Content-Type': 'application/json'
-      }
+    const trac = "ProgramID=18518&RequesterName=TRACReact&RequesterTitle=test&RequesterPhone=40166666&RequesterEmail=brendan_ryan%40aptonline.org&Period=2&StartDate=06%2F02%2F2023"
+    const xhr = new XMLHttpRequest();
+    xhr.addEventListener('load', () => {
+      console.log(xhr.response)
     })
-    const json = await res.json()
-    if(!res.ok){
-      toast.error(json.error, {
-        position: 'top-center',
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: 'colored',
-      });
-    }
-    if(res.ok) {
-      dispatch({type: 'CREATE_TRAC', payload: json })
-      toast.success('Your registration was submitted successfully, we will be in touch.', {
-        position: 'top-center',
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: 'colored',
-        });
-      setEnableButton(!enableButton)
-      setTimeout(function() {window.location.reload()}, 6000)
-    }  
+    xhr.addEventListener('error', (e) => {
+      console.log('it does not work', e)
+    })
+    xhr.open("POST", "https://beta.aptonline.org/TRACSubs.nsf/Request?CreateDocument", true)
+    xhr.setRequestHeader("Authorization", "Basic " + window.btoa("brendan_ryan@aptonline.org:ENDh1ts!"))
+    xhr.withCredentials = true
+    xhr.send(trac) 
+    console.log('request sent') 
+
   }
-  
-  if (programs === undefined) {
-    return <>Still loading...</>
-  }
+
 
   return (
     <div className='card'>
@@ -105,7 +80,7 @@ const SubscriptionForm = () => {
       <div className='card-body'>
         <form onSubmit={handleNew}>  
           <section className='form-grid'>      
-            <input
+            {/* <input
               className='form-control-lg'
               id='program'
               list='programList'
@@ -121,7 +96,7 @@ const SubscriptionForm = () => {
                   <option key={program._id} value={program.programtitle} />
                 )
               })}
-            </datalist>
+            </datalist> */}
             <input
               className='form-control-lg'
               type='text'
@@ -191,15 +166,10 @@ const SubscriptionForm = () => {
               maxLength='32'
               required
             />
-            <div className='form-check terms-check mx-auto'>
-              <input className='form-check-input' type='checkbox' value={termsOfUse} id='termsOfUse' onClick={ isValid ? () => setTermsOfUse(!termsOfUse) : console.log('working') }/>
-              <label className='form-check-label text-nowrap' htmlFor='termsOfUse'>
-                Acknowledgement of Terms
-              </label>
-            </div>
+
             </section>
             <div className='submit-btn'>
-              <button className='btn' type='submit' disabled={!termsOfUse}>
+              <button className='btn' type='submit'>
                 Register
               </button>
             </div>
