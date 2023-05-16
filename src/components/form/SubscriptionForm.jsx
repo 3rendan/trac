@@ -64,7 +64,7 @@ const SubscriptionForm = () => {
       console.log('it does not work', e)
     })
     xhr.open("POST", "https://beta.aptonline.org/TRACSubs.nsf/Request?CreateDocument", true)
-    xhr.setRequestHeader("Authorization", "Basic " + window.btoa("brendan_ryan@aptonline.org:ENDh1ts!"))
+    xhr.setRequestHeader("Authorization", "Basic " + btoa('brendan_ryan@aptonline.org:ENDh1ts!'))
     xhr.withCredentials = true
     xhr.send(trac) 
     console.log('request sent') 
