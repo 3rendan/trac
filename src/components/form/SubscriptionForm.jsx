@@ -4,7 +4,9 @@ import 'react-toastify/dist/ReactToastify.css';
 import { useTracsContext } from '../../hooks/useTracsContext'
 import ProgramsContext from '../../context/ProgramsContext'
 import Terms from './Terms'
-import { Modal, Card, Button } from 'react-bootstrap'
+import Modal from 'react-bootstrap/Modal'
+import Button from 'react-bootstrap/Button'
+import Card from 'react-bootstrap/Card'
 
 const SubscriptionForm = () => {
   const { dispatch } = useTracsContext()
@@ -215,7 +217,7 @@ const SubscriptionForm = () => {
                 </Modal.Footer>
               </Modal>
             <div className='d-grid'>
-              <Button type='submit' disabled={!termsOfUse}>Register</Button>
+              <Button type='submit' style={{color: 'white'}} disabled={!termsOfUse}>Register</Button>
               <div className="text-center mt-2">
                 <small className='fst-italic'>You must fill in all fields and agree to the Terms of Use to submit a request.</small>
               </div>

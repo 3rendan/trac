@@ -1,10 +1,12 @@
 import React from 'react'
-import { Link } from 'react-router-dom'
+import Button from 'react-bootstrap/Button'
 
 const CarriageService = () => {
   return (
     <div className='container'>
-      <Link to='/form'><button className='btn'>Signup for Carriage Reports</button></Link>
+      <div className="d-grid gap-2 mt-4">
+        <Button href='/form' variant='primary' className='btn-x' style={{color: 'white'}}>Signup for Carriage Reports</Button>
+      </div>
       <div className='text-center'>
         <h1 className='faq-title-row'>Carriage Service</h1>
         <p className='fs-6'>A national airdate tracking website sourced by TRAC-Media</p>
@@ -51,7 +53,9 @@ const CarriageService = () => {
 
         <p className='fw-bolder fst-italic'>Please Note: The program you are interested in tracking through our service must be currently distributed by APT.</p>
       </div>
-      <Link to='/form'><button className='btn'>Signup for Carriage Reports</button></Link>
+      <div className="d-grid gap-2 mt-4">
+        <Button href='/form' variant='primary' className='btn-x' style={{color: 'white'}}>Signup for Carriage Reports</Button>
+      </div>
     </div>
   )
 }

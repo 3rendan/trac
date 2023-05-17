@@ -1,6 +1,6 @@
 import React from 'react'
-import SubscriptionForm from './form/SubscriptionForm'
-import FYI from './form/FYI'
+import SubscriptionForm from './SubscriptionForm'
+import FYI from './FYI'
 
 const FormGrid = () => {
   return (

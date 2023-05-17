@@ -4,7 +4,8 @@ import App from './App'
 import { TracsContextProvider } from './context/TracsContext'
 import { ProgramsProvider } from './context/ProgramsContext'
 import reportWebVitals from './reportWebVitals'
-import 'bootstrap/dist/css/bootstrap.min.css'
+import './assets/style/main.scss'
+
 
 const root = ReactDOM.createRoot(document.getElementById('root'))
 root.render(

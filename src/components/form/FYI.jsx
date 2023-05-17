@@ -1,5 +1,5 @@
 import React from 'react'
-import { Card } from 'react-bootstrap'
+import Card from 'react-bootstrap/Card'
 
 const FYI = () => {
   return (
