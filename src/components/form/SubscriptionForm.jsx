@@ -69,33 +69,18 @@ const SubscriptionForm = () => {
 
   const handleNew =  async (e) => {
     e.preventDefault()
-    const trac = {...formData }
-    console.log(trac)
-    const res = await fetch('api/tracs', {
-      method: 'POST',
-      body: JSON.stringify(trac), 
-      headers: {
-        'Content-Type': 'application/json'
-      }
+    const xhr = new XMLHttpRequest();
+    const trac = "ProgramID=18518&RequesterName=TRACReact&RequesterTitle=test&RequesterPhone=40166666&RequesterEmail=brendan_ryan%40aptonline.org&Period=2&StartDate=06%2F02%2F2023"
+    xhr.open("GET", "http://localhost:4000/api/trac", true) 
+    console.log('sending')
+    xhr.addEventListener('load', () => {
+      console.log(xhr.response)
     })
-    const json = await res.json()
-    if(!res.ok){
-      toast.error(json.error)
-    }
-    if(res.ok) {
-      dispatch({type: 'CREATE_TRAC', payload: json })
-      setFormData({
-        ProgramID: '',
-        RequestorName: '',
-        RequestorTitle: '',
-        RequestorPhone: '',
-        RequestorEmail: '',
-        Period: '',
-        StartDate: ''
-      })
-      setTermsOfUse(false)
-      toast.success('You have successfully submitted your carriage service request and will recieve a response in 2 to 3 days.')
-    } 
+    xhr.addEventListener('error', (e) => {
+      console.log('it does not work', e)
+    })
+    xhr.send(trac)
+    console.log(xhr.send(trac))
   }
   
   if (programs === undefined) {
