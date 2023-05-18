@@ -69,17 +69,24 @@ const SubscriptionForm = () => {
 
   const handleNew =  async (e) => {
     e.preventDefault()
-    // const tracJSON = {...formData}
-
-    const trac = "ProgramID=18518&RequestorName=TRACReactXML&RequestorTitle=test&RequestorPhone=40166666&RequestorEmail=brendan_ryan%40aptonline.org&Period=2&StartDate=06%2F02%2F2023"
-
+    let tracJSON = new URLSearchParams({...formData})
+    const trac = tracJSON.toString()
     const xhr = new XMLHttpRequest();
     xhr.addEventListener('load', () => {
-      console.log(xhr.response)
-      console.log(trac)
+      setFormData({
+        ProgramID: '',
+        RequestorName: '',
+        RequestorTitle: '',
+        RequestorPhone: '',
+        RequestorEmail: '',
+        Period: '',
+        StartDate: ''
+      })
+      setTermsOfUse(false)
+      toast.success('You have successfully submitted your carriage service request and will recieve a response in 2 to 3 days.')
     })
     xhr.addEventListener('error', (e) => {
-      console.log('hello')
+      toast.error(e)
     })
     xhr.open('POST', 'api/tracs', true)
     xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded')
