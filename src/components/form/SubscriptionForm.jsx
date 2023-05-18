@@ -71,7 +71,7 @@ const SubscriptionForm = () => {
     e.preventDefault()
     const trac = {...formData }
     console.log(trac)
-    const res = await fetch('api/tracs', {
+    const res = await fetch('localhost:4000/api/trac', {
       method: 'POST',
       body: JSON.stringify(trac), 
       headers: {
