@@ -70,8 +70,7 @@ const SubscriptionForm = () => {
   const handleNew =  async (e) => {
     e.preventDefault()
     const trac = {...formData }
-    console.log(trac)
-    const res = await fetch('localhost:4000/api/trac', {
+    const res = await fetch('/api/tracs', {
       method: 'POST',
       body: JSON.stringify(trac), 
       headers: {
@@ -119,7 +118,14 @@ const SubscriptionForm = () => {
               onChange={onMutate}
               maxLength='32'
               required  
-            /> 
+            />
+            <datalist id="programList">
+              { programs && programs.map((program) => {
+                return (
+                  <option key={program._id} value={program.programtitle} />
+                )
+              })}
+            </datalist>
             <input
               className='form-control-lg'
               type='text'
