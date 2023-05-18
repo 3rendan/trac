@@ -1,6 +1,6 @@
 import { useEffect, useState, useContext } from 'react'
 import { toast } from 'react-toastify'
-import 'react-toastify/dist/ReactToastify.css';
+import 'react-toastify/dist/ReactToastify.css'
 import { useTracsContext } from '../../hooks/useTracsContext'
 import ProgramsContext from '../../context/ProgramsContext'
 import Terms from './Terms'
@@ -69,32 +69,21 @@ const SubscriptionForm = () => {
 
   const handleNew =  async (e) => {
     e.preventDefault()
-    const trac = {...formData }
-    const res = await fetch('/api/tracs', {
-      method: 'POST',
-      body: JSON.stringify(trac), 
-      headers: {
-        'Content-Type': 'application/json'
-      }
+    // const tracJSON = {...formData}
+
+    const trac = "ProgramID=18518&RequestorName=TRACReactXML&RequestorTitle=test&RequestorPhone=40166666&RequestorEmail=brendan_ryan%40aptonline.org&Period=2&StartDate=06%2F02%2F2023"
+
+    const xhr = new XMLHttpRequest();
+    xhr.addEventListener('load', () => {
+      console.log(xhr.response)
+      console.log(trac)
     })
-    const json = await res.json()
-    if(!res.ok){
-      toast.error(json.error)
-    }
-    if(res.ok) {
-      dispatch({type: 'CREATE_TRAC', payload: json })
-      setFormData({
-        ProgramID: '',
-        RequestorName: '',
-        RequestorTitle: '',
-        RequestorPhone: '',
-        RequestorEmail: '',
-        Period: '',
-        StartDate: ''
-      })
-      setTermsOfUse(false)
-      toast.success('You have successfully submitted your carriage service request and will recieve a response in 2 to 3 days.')
-    } 
+    xhr.addEventListener('error', (e) => {
+      console.log('hello')
+    })
+    xhr.open('POST', 'api/tracs', true)
+    xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded')
+    xhr.send(trac) 
   }
   
   if (programs === undefined) {
@@ -119,7 +108,7 @@ const SubscriptionForm = () => {
               maxLength='32'
               required  
             />
-            <datalist id="programList">
+            <datalist id='programList'>
               { programs && programs.map((program) => {
                 return (
                   <option key={program._id} value={program.programtitle} />
@@ -206,7 +195,7 @@ const SubscriptionForm = () => {
               required
             />
             </section>
-            <div className="text-center mt-1 mb-1">
+            <div className='text-center mt-1 mb-1'>
               <span className='tou-modal-link' onClick={() => setShow(true)}>
                 Terms of Use
               </span>
@@ -224,7 +213,7 @@ const SubscriptionForm = () => {
               </Modal>
             <div className='d-grid'>
               <Button type='submit' style={{color: 'white'}} disabled={!termsOfUse}>Register</Button>
-              <div className="text-center mt-2">
+              <div className='text-center mt-2'>
                 <small className='fst-italic'>You must fill in all fields and agree to the Terms of Use to submit a request.</small>
               </div>
             </div>
