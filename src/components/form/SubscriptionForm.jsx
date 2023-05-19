@@ -7,6 +7,7 @@ import Terms from './Terms'
 import Modal from 'react-bootstrap/Modal'
 import Button from 'react-bootstrap/Button'
 import Card from 'react-bootstrap/Card'
+import Form from 'react-bootstrap/Form'
 
 const SubscriptionForm = () => {
   const { dispatch } = useTracsContext()
@@ -89,6 +90,10 @@ const SubscriptionForm = () => {
       toast.error(e)
     })
     xhr.open('POST', 'api/tracs', true)
+    // THESE ARE SETTINGS FOR THE DOMINO SERVER
+    // xhr.open('POST', 'https://beta.aptonline.org/TRACSubs.nsf/Request?CreateDocument', true)
+    // xhr.setRequestHeader('Authorization', 'Basic ' + btoa(process.env.USERNAME:process.env.PASSWORD))
+    // xhr.withCredentials = true
     xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded')
     xhr.send(trac) 
   }
@@ -103,10 +108,10 @@ const SubscriptionForm = () => {
         <h3 className='text-center'>Subscribe to TRAC Carriage reports</h3>
       </Card.Header>
       <Card.Body>
-        <form onSubmit={handleNew}>  
+        <Form onSubmit={handleNew}>  
           <section className='form-grid'>      
-            <input
-              className='form-control-lg'
+            <Form.Control 
+              size='lg'
               id='ProgramID'
               list='programList'
               placeholder='Type to search...'
@@ -122,8 +127,8 @@ const SubscriptionForm = () => {
                 )
               })}
             </datalist>
-            <input
-              className='form-control-lg'
+            <Form.Control 
+              size='lg'
               type='text'
               id='RequestorName'
               placeholder={`Subscriber's Name`}
@@ -132,8 +137,8 @@ const SubscriptionForm = () => {
               maxLength='32'
               required  
             />         
-            <input
-              className='form-control-lg'
+            <Form.Control 
+              size='lg'
               type='text'
               id='RequestorCompany'
               placeholder={`Subscriber's Company`}
@@ -142,8 +147,8 @@ const SubscriptionForm = () => {
               maxLength='32'
               required  
             />         
-            <input
-              className='form-control-lg'
+            <Form.Control 
+              size='lg'
               type='text'
               id='RequestorTitle'
               placeholder={`Subscriber's title`}
@@ -152,8 +157,8 @@ const SubscriptionForm = () => {
               maxLength='32'
               required  
             />
-            <input
-              className='form-control-lg'
+            <Form.Control 
+              size='lg'
               type='text'
               id='RequestorPhone'
               placeholder={`Subscriber's phone number`}
@@ -162,8 +167,8 @@ const SubscriptionForm = () => {
               maxLength='32'
               required  
             />          
-            <input
-              className='form-control-lg'
+            <Form.Control 
+              size='lg'
               type='text'
               id='RequestorEmail'
               placeholder={`Subscriber's email`}
@@ -172,8 +177,8 @@ const SubscriptionForm = () => {
               maxLength='32'
               required 
             />
-            <input
-              className='form-control-lg'
+            <Form.Control 
+              size='lg'
               id='Period'
               list='tracPeriod'
               placeholder='Subscription Period'
@@ -191,8 +196,8 @@ const SubscriptionForm = () => {
               <option value='6 Month' />
               <option value='1 Year' />
             </datalist>           
-            <input
-              className='form-control-lg'
+            <Form.Control 
+              size='lg'
               type='text'
               id='StartDate'
               placeholder='Start Date'
@@ -203,9 +208,9 @@ const SubscriptionForm = () => {
             />
             </section>
             <div className='text-center mt-1 mb-1'>
-              <span className='tou-modal-link' onClick={() => setShow(true)}>
+              <h4 className='tou-modal-link' onClick={() => setShow(true)}>
                 Terms of Use
-              </span>
+              </h4>
             </div>
               <Modal
                 show={show}
@@ -224,7 +229,7 @@ const SubscriptionForm = () => {
                 <small className='fst-italic'>You must fill in all fields and agree to the Terms of Use to submit a request.</small>
               </div>
             </div>
-          </form>
+          </Form>
         </Card.Body>
       </Card>
   )
