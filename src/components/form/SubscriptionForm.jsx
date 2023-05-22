@@ -95,6 +95,7 @@ const SubscriptionForm = () => {
     // xhr.setRequestHeader('Authorization', 'Basic ' + btoa(process.env.USERNAME:process.env.PASSWORD))
     // xhr.withCredentials = true
     xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded')
+    console.log(trac)
     xhr.send(trac) 
   }
   

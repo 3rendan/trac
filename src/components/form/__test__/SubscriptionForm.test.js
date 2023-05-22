@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react'
-import SubscriptionForm from './SubscriptionForm'
+import SubscriptionForm from '../SubscriptionForm'
 
 test('terms button disabled', () => {
   render( <SubscriptionForm />)

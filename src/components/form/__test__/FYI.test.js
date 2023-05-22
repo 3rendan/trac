@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react'
-import FYI from './FYI'
+import FYI from '../FYI'
 
 test('renders FYI text', () => {
   render( <FYI />)
