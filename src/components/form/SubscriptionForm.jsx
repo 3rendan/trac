@@ -19,11 +19,11 @@ const SubscriptionForm = () => {
 
   const [ formData, setFormData ] = useState({
     ProgramID: '',
-    RequestorName: '',
-    RequestorCompany: '',
-    RequestorTitle: '',
-    RequestorPhone: '',
-    RequestorEmail: '',
+    RequesterName: '',
+    RequesterCompany: '',
+    RequesterTitle: '',
+    RequesterPhone: '',
+    RequesterEmail: '',
     Period: '',
     StartDate: ''
   })
@@ -31,15 +31,15 @@ const SubscriptionForm = () => {
     // eslint-disable-next-line
     ProgramID,
     // eslint-disable-next-line
-    RequestorName,
+    RequesterName,
     // eslint-disable-next-line
-    RequestorCompany,
+    RequesterCompany,
     // eslint-disable-next-line
-    RequestorTitle,
+    RequesterTitle,
     // eslint-disable-next-line
-    RequestorPhone,
+    RequesterPhone,
     // eslint-disable-next-line
-    RequestorEmail,
+    RequesterEmail,
     // eslint-disable-next-line
     Period,
     // eslint-disable-next-line
@@ -76,10 +76,11 @@ const SubscriptionForm = () => {
     xhr.addEventListener('load', () => {
       setFormData({
         ProgramID: '',
-        RequestorName: '',
-        RequestorTitle: '',
-        RequestorPhone: '',
-        RequestorEmail: '',
+        RequesterName: '',
+        RequesterTitle: '',
+        RequesterCompany: '',
+        RequesterPhone: '',
+        RequesterEmail: '',
         Period: '',
         StartDate: ''
       })
@@ -113,6 +114,8 @@ const SubscriptionForm = () => {
           <section className='form-grid'>      
             <Form.Control 
               size='lg'
+              name='ProgramID'
+              type='text'
               id='ProgramID'
               list='programList'
               placeholder='Type to search...'
@@ -131,9 +134,9 @@ const SubscriptionForm = () => {
             <Form.Control 
               size='lg'
               type='text'
-              id='RequestorName'
+              id='RequesterName'
               placeholder={`Subscriber's Name`}
-              value={formData.RequestorName}
+              value={formData.RequesterName}
               onChange={onMutate}
               maxLength='32'
               required  
@@ -141,9 +144,9 @@ const SubscriptionForm = () => {
             <Form.Control 
               size='lg'
               type='text'
-              id='RequestorCompany'
+              id='RequesterCompany'
               placeholder={`Subscriber's Company`}
-              value={formData.RequestorCompany}
+              value={formData.RequesterCompany}
               onChange={onMutate}
               maxLength='32'
               required  
@@ -151,9 +154,9 @@ const SubscriptionForm = () => {
             <Form.Control 
               size='lg'
               type='text'
-              id='RequestorTitle'
+              id='RequesterTitle'
               placeholder={`Subscriber's title`}
-              value={formData.RequestorTitle}
+              value={formData.RequesterTitle}
               onChange={onMutate}
               maxLength='32'
               required  
@@ -161,9 +164,9 @@ const SubscriptionForm = () => {
             <Form.Control 
               size='lg'
               type='text'
-              id='RequestorPhone'
+              id='RequesterPhone'
               placeholder={`Subscriber's phone number`}
-              value={formData.RequestorPhone}
+              value={formData.RequesterPhone}
               onChange={onMutate}
               maxLength='32'
               required  
@@ -171,9 +174,9 @@ const SubscriptionForm = () => {
             <Form.Control 
               size='lg'
               type='text'
-              id='RequestorEmail'
+              id='RequesterEmail'
               placeholder={`Subscriber's email`}
-              value={formData.RequestorEmail}
+              value={formData.RequesterEmail}
               onChange={onMutate}
               maxLength='32'
               required 
@@ -219,7 +222,7 @@ const SubscriptionForm = () => {
                 id='tou'
                 scrollable='true'
               >
-                <Terms company={formData.RequestorCompany}/>
+                <Terms company={formData.RequesterCompany}/>
                 <Modal.Footer className='d-grid'>
                   <Button onClick={() => agreeAndClose()}>Agree</Button>
                 </Modal.Footer>
