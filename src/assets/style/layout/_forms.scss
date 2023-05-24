@@ -86,5 +86,10 @@ form {
     grid-template-columns: 2fr 1fr;
   }
 }
+.tou-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  justify-content: space-around;
+}
 
 

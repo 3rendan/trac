@@ -1,6 +1,7 @@
 import { render, fireEvent, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import SubscriptionForm from '../SubscriptionForm'
+import Terms from '../Terms'
 import { TracsContextProvider } from '../../../context/TracsContext'
 import { ProgramsProvider } from '../../../context/ProgramsContext'
 
@@ -10,9 +11,7 @@ test('terms button disabled',  () => {
   expect(screen.getByRole('button', {name: /register/i})).toBeDisabled()
 })
 test('if form is filled and terms accepted register button becomes enabled', async () => {
-  render(<TracsContextProvider><ProgramsProvider><SubscriptionForm /></ProgramsProvider></TracsContextProvider>)
-
-
+  render(<TracsContextProvider><ProgramsProvider><SubscriptionForm /><Terms /></ProgramsProvider></TracsContextProvider>)
   userEvent.type(screen.getByPlaceholderText(/type to search/i), 'React Testing')
   userEvent.type(screen.getByPlaceholderText(/Subscriber's Name/i), 'React Testing')
   userEvent.type(screen.getByPlaceholderText(/Subscriber's Company/i), 'React Testing')
@@ -21,9 +20,8 @@ test('if form is filled and terms accepted register button becomes enabled', asy
   userEvent.type(screen.getByPlaceholderText(/Subscriber's phone number/i), '401 555-5555')
   userEvent.type(screen.getByPlaceholderText(/subscription period/i), '1 Year')
   userEvent.type(screen.getByPlaceholderText(/start date/i), '05/23/2023')
-  userEvent.type(screen.getByRole('button', {name: /agree/i}), true)
-
-
+  const touCheck = screen.getByRole('checkbox')
+  fireEvent.click(touCheck)
   expect(await screen.findByRole('button', {name: /register/i})).toBeEnabled()
 })
 

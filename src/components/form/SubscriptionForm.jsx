@@ -12,7 +12,6 @@ import Form from 'react-bootstrap/Form'
 const SubscriptionForm = () => {
   const { dispatch } = useTracsContext()
   const { programs } = useContext(ProgramsContext)
-  const [ isValid, setIsValid ] = useState(false)
   const [ enableButton, setEnableButton ] = useState(false)
   const [ show, setShow ] = useState(false)
   const [ termsOfUse, setTermsOfUse ] = useState(false)
@@ -47,9 +46,7 @@ const SubscriptionForm = () => {
   } = formData
 
   useEffect(() => {
-    if (formData !== null) {
-      setIsValid(Object.values(formData).every((value) => value !== ''));
-    }
+    const isValid = Object.values(formData).every((value) => value !== '')
     if(termsOfUse && isValid) {
       setEnableButton(!enableButton)
     }
@@ -211,22 +208,23 @@ const SubscriptionForm = () => {
               required
             />
             </section>
-            <div className='text-center mt-1 mb-1'>
-              <h4 className='tou-modal-link' onClick={() => setShow(true)}>
-                Terms of Use
-              </h4>
-            </div>
+            <div className='mt-3 mb-3 tou-grid'>
+              <div className='tou-modal-link d-block m-auto' onClick={() => setShow(true)}>
+                <span className="tou-modal-link">Terms of Use</span>
+              </div>
               <Modal
                 show={show}
                 onHide={() => setShow(false)}
                 id='tou'
                 scrollable='true'
-              >
+                >
                 <Terms company={formData.RequesterCompany}/>
-                <Modal.Footer className='d-grid'>
-                  <Button onClick={() => agreeAndClose()}>Agree</Button>
-                </Modal.Footer>
               </Modal>
+              <div className="d-block m-auto">
+                <Form.Check type='checkbox' label='Agree and accept terms' onClick={() => setTermsOfUse(true)} />
+              </div>
+            </div>
+
             <div className='d-grid'>
               <Button type='submit' style={{color: 'white'}} disabled={!termsOfUse}>Register</Button>
               <div className='text-center mt-2'>
