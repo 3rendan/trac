@@ -1,6 +1,4 @@
 import { useEffect, useState, useContext } from 'react'
-import { toast } from 'react-toastify'
-import 'react-toastify/dist/ReactToastify.css';
 import { useTracsContext } from '../../hooks/useTracsContext'
 // import ProgramsContext from '../../context/ProgramsContext'
 
@@ -55,21 +53,28 @@ const SubscriptionForm = () => {
 
   const handleNew =  async (e) => {
     e.preventDefault()
-    const trac = "ProgramID=18518&RequesterName=TRACReact&RequesterTitle=test&RequesterPhone=40166666&RequesterEmail=brendan_ryan%40aptonline.org&Period=2&StartDate=06%2F02%2F2023"
-    const xhr = new XMLHttpRequest();
-    xhr.addEventListener('load', () => {
-      console.log(xhr.response)
+    const username = 'brendan_ryan@aptonline.org'
+    const password = 'ENDh1ts!'
+    const trac = {...formData, termsOfUse }
+    const res = await fetch('https://beta.aptonline.org/TRACSubs.nsf/Request?CreateDocument', {
+      method: 'POST',
+      body: JSON.stringify(trac), 
+      headers: {
+        'Authorization': 'Basic ' + btoa(username + ':' + password),
+        'Content-Type': 'application/json'
+      }
     })
-    xhr.addEventListener('error', (e) => {
-      console.log('it does not work', e)
-    })
-    xhr.open("POST", "https://beta.aptonline.org/TRACSubs.nsf/Request?CreateDocument", true)
-    xhr.setRequestHeader("Authorization", "Basic " + btoa(process.env.VARIABLES))
-    xhr.withCredentials = true
-    xhr.send(trac) 
-    console.log('request sent') 
-
+    const json = await res.json()
+    if(!res.ok){
+      console.log(json.error)
+      console.log(json)
+    }
+    if(res.ok) {
+      dispatch({type: 'CREATE_TRAC', payload: json })
+      console.log('full success', json)
+    }  
   }
+
 
 
   return (
