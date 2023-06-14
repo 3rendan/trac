@@ -67,34 +67,32 @@ const SubscriptionForm = () => {
 
   const handleNew =  async (e) => {
     e.preventDefault()
-    let tracJSON = new URLSearchParams({...formData})
-    const trac = tracJSON.toString()
-    const xhr = new XMLHttpRequest();
-    xhr.addEventListener('load', () => {
+    const trac = {...formData }
+    const res = await fetch('api/tracs', {
+      method: 'POST',
+      body: JSON.stringify(trac), 
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
+    const json = await res.json()
+    if(!res.ok){
+      toast.error(json.error)
+    }
+    if(res.ok) {
+      dispatch({type: 'CREATE_TRAC', payload: json })
       setFormData({
         ProgramID: '',
-        RequesterName: '',
-        RequesterTitle: '',
-        RequesterCompany: '',
-        RequesterPhone: '',
-        RequesterEmail: '',
+        RequestorName: '',
+        RequestorTitle: '',
+        RequestorPhone: '',
+        RequestorEmail: '',
         Period: '',
         StartDate: ''
       })
       setTermsOfUse(false)
       toast.success('You have successfully submitted your carriage service request and will recieve a response in 2 to 3 days.')
-    })
-    xhr.addEventListener('error', (e) => {
-      toast.error(e)
-    })
-    xhr.open('POST', 'api/tracs', true)
-    // THESE ARE SETTINGS FOR THE DOMINO SERVER
-    // xhr.open('POST', 'https://beta.aptonline.org/TRACSubs.nsf/Request?CreateDocument', true)
-    // xhr.setRequestHeader('Authorization', 'Basic ' + btoa(process.env.USERNAME:process.env.PASSWORD))
-    // xhr.withCredentials = true
-    xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded')
-    console.log(trac)
-    xhr.send(trac) 
+    } 
   }
   
   if (programs === undefined) {
