@@ -4,7 +4,7 @@ function Terms({company}) {
   return (
     <>
       <Modal.Header closeButton>
-        <Modal.Title className="d-block m-auto">
+        <Modal.Title className="d-block m-auto" data-testid='tou'>
           <p>Terms of Use</p>
         </Modal.Title>
       </Modal.Header>

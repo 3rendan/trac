@@ -2,7 +2,6 @@ import { useEffect, useState, useContext } from 'react'
 import { toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import { useTracsContext } from '../../hooks/useTracsContext'
-import ProgramsContext from '../../context/ProgramsContext'
 import Terms from './Terms'
 import Modal from 'react-bootstrap/Modal'
 import Button from 'react-bootstrap/Button'
@@ -11,7 +10,6 @@ import Form from 'react-bootstrap/Form'
 
 const SubscriptionForm = () => {
   const { dispatch } = useTracsContext()
-  const { programs } = useContext(ProgramsContext)
   const [ enableButton, setEnableButton ] = useState(false)
   const [ show, setShow ] = useState(false)
   const [ termsOfUse, setTermsOfUse ] = useState(false)
@@ -60,11 +58,6 @@ const SubscriptionForm = () => {
     }))
   } 
 
-  const agreeAndClose = () => {
-    setShow(false)
-    setTermsOfUse(true)
-  }
-
   const handleNew =  async (e) => {
     e.preventDefault()
     const trac = {...formData }
@@ -95,10 +88,6 @@ const SubscriptionForm = () => {
     } 
   }
   
-  if (programs === undefined) {
-    return <>Still loading...</>
-  }
-
   return (
     <Card>
       <Card.Header>
@@ -119,13 +108,13 @@ const SubscriptionForm = () => {
               maxLength='32'
               required  
             />
-            <datalist id='programList'>
+            {/* <datalist id='programList'>
               { programs && programs.map((program) => {
                 return (
                   <option key={program._id} value={program.programtitle} />
                 )
               })}
-            </datalist>
+            </datalist> */}
             <Form.Control 
               size='lg'
               type='text'
@@ -219,12 +208,12 @@ const SubscriptionForm = () => {
                 <Terms company={formData.RequesterCompany}/>
               </Modal>
               <div className="d-block m-auto">
-                <Form.Check type='checkbox' label='Agree and accept terms' onClick={() => setTermsOfUse(true)} />
+                <Form.Check type='checkbox' data-testid='terms-check' label='Agree and accept terms' onClick={() => setTermsOfUse(true)} />
               </div>
             </div>
 
             <div className='d-grid'>
-              <Button type='submit' style={{color: 'white'}} disabled={!termsOfUse}>Register</Button>
+              <Button type='submit' data-testid='sbmt-btn' style={{color: 'white'}} disabled={!termsOfUse}>Register</Button>
               <div className='text-center mt-2'>
                 <small className='fst-italic'>You must fill in all fields and agree to the Terms of Use to submit a request.</small>
               </div>
