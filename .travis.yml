@@ -1,19 +1,21 @@
-version: '3'
+sudo: require
 services:
-  web:
-    build: 
-      context: .
-      dockerfile: Dockerfile.dev
-    ports:
-      - "3000:3000"
-    volumes:
-      - /home/node/app/node_modules
-      - .:/home/node/app
-  tests:
-    build: 
-      context: .
-      dockerfile: Dockerfile.dev
-    volumes:
-      - /home/node/app/node_modules
-      - .:/home/node/app
-    command: ["npm", "run", "test"]
+  - docker
+
+before_install: 
+  - docker build -t 3rendan/trac -f Dockerfile.dev .
+
+script:
+  - docker run -e CI=true 3rendan/trac npm run test
+
+deploy:
+  provider: elasticbeanstalk
+  region: "us-east-1"
+  app: "Atp-trac"
+  env: "Atp-trac-env"
+  bucket_name: "elasticbeanstalk-us-east-1-396740853817"
+  bucket_path: "3rendan-docker-react"
+  on:
+    branch: master
+  access_key_id: $AWS_ACCESS_KEY
+  secret_access_key: "$AWS_SECRET_KEY"
