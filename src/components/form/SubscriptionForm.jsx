@@ -76,10 +76,10 @@ const SubscriptionForm = () => {
       dispatch({type: 'CREATE_TRAC', payload: json })
       setFormData({
         ProgramID: '',
-        RequestorName: '',
-        RequestorTitle: '',
-        RequestorPhone: '',
-        RequestorEmail: '',
+        RequesterName: '',
+        RequesterTitle: '',
+        RequesterPhone: '',
+        RequesterEmail: '',
         Period: '',
         StartDate: ''
       })
