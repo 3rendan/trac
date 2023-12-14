@@ -1,0 +1,37 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      nodejs: 18
+    commands:
+      - npm install
+      - npm install cypress # Install Cypress
+      - npm install playwright-webkit
+      - yum update # or yum update for Amazon Linux
+      - yum install -y gtk3-devel nss libXScrnSaver alsa-lib xorg-x11-server-Xvfb libXtst # or equivalent yum commands
+
+  pre_build:
+    commands:
+      - echo "Starting the build process..."
+
+  build:
+    commands:
+      - npm run build # Build the React app
+      - aws s3 sync build/ s3://trac-subs-test/ --delete # Sync to the first S3 bucket
+
+  post_build:
+    commands:
+      - echo "Running tests..."
+      - DEBUG=cypress:* npx cypress run --headless # Run Cypress tests with detailed logging
+      - |
+        if [ $? -eq 0 ]; then
+          echo "Tests passed, syncing to the second bucket..."
+          aws s3 sync build/ s3://trac-subs/ --delete # Sync to the second S3 bucket on test success
+        else
+          echo "Tests failed."
+          # Optionally upload artifacts like screenshots or videos here
+          aws s3 cp cypress/screenshots/ s3://apt-podcast-test-errors/screenshots/ --recursive
+          aws s3 cp cypress/videos/ s3://trac-subs-test-errors/videos/ --recursive
+          exit 1 # Fail the build if tests fail
+        fi
