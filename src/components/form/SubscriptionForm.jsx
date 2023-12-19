@@ -1,46 +1,47 @@
-import { useEffect, useState } from 'react'
-import { toast } from 'react-toastify'
-import 'react-toastify/dist/ReactToastify.css'
+import { useEffect, useState, useContext } from 'react'
 import { useTracsContext } from '../../hooks/useTracsContext'
 import Terms from './Terms'
+import ProgramInput from './ProgramInput'
+import axios from 'axios'
+import { toast } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
 import Modal from 'react-bootstrap/Modal'
 import Button from 'react-bootstrap/Button'
 import Card from 'react-bootstrap/Card'
 import Form from 'react-bootstrap/Form'
+import { ProgramsContext } from '../../context/ProgramsContext'
 
 const SubscriptionForm = () => {
+  const { programs, loading } = useContext(ProgramsContext)
   const { dispatch } = useTracsContext()
   const [ enableButton, setEnableButton ] = useState(false)
   const [ show, setShow ] = useState(false)
   const [ termsOfUse, setTermsOfUse ] = useState(false)
 
   const [ formData, setFormData ] = useState({
-    ProgramID: '',
-    RequesterName: '',
-    RequesterCompany: '',
-    RequesterTitle: '',
-    RequesterPhone: '',
-    RequesterEmail: '',
-    Period: '',
-    StartDate: ''
+    programId: '',
+    name: '',
+    title: '',
+    phone: '',
+    email: '',
+    subscriptionPeriod: '',
+    startDate: ''
   })
   const {
     // eslint-disable-next-line
-    ProgramID,
+    programId,
     // eslint-disable-next-line
-    RequesterName,
+    name,
     // eslint-disable-next-line
-    RequesterCompany,
+    title,
     // eslint-disable-next-line
-    RequesterTitle,
+    phone,
     // eslint-disable-next-line
-    RequesterPhone,
+    email,
     // eslint-disable-next-line
-    RequesterEmail,
+    subscriptionPeriod,
     // eslint-disable-next-line
-    Period,
-    // eslint-disable-next-line
-    StartDate
+    startDate
   } = formData
 
   useEffect(() => {
@@ -58,69 +59,68 @@ const SubscriptionForm = () => {
     }))
   } 
 
-  const handleNew =  async (e) => {
-    e.preventDefault()
-    const trac = {...formData }
-    const res = await fetch('api/tracs', {
-      method: 'POST',
-      body: JSON.stringify(trac), 
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    })
-    const json = await res.json()
-    if(!res.ok){
-      toast.error(json.error)
-    }
-    if(res.ok) {
-      dispatch({type: 'CREATE_TRAC', payload: json })
-      setFormData({
-        ProgramID: '',
-        RequesterName: '',
-        RequesterTitle: '',
-        RequesterPhone: '',
-        RequesterEmail: '',
-        Period: '',
-        StartDate: ''
-      })
-      setTermsOfUse(false)
-      toast.success('You have successfully submitted your carriage service request and will recieve a response in 2 to 3 days.')
-    } 
+  const handleProgramSelect = (programId) => {
+    setFormData((prevState) => ({
+      ...prevState,
+      programId
+    }))
   }
+
+  const handleNew = async (e) => {
+    e.preventDefault();
+    const trac = { ...formData };
+  
+    try {
+      const response = await axios.post('https://qd9pusq3ze.execute-api.us-east-1.amazonaws.com/prod/create', trac);
+  
+      // Assuming the API response includes the necessary data in the format you expect
+      const json = response.data;
+      console.log(response.data.status)
+      dispatch({ type: 'CREATE_TRAC', payload: json });
+      setFormData({
+        programId: '',
+        name: '',
+        company: '',
+        title: '',
+        phone: '',
+        email: '',
+        subscriptionPeriod: '',
+        startDate: ''
+      });
+      setTermsOfUse(false);
+      toast.success('You have successfully submitted your carriage service request and will receive a response in 2 to 3 days.', {
+        autoClose: 5000
+      });
+  
+    } catch (error) {
+      // Handle error here. If the response body contains JSON, it can be accessed via error.response.data
+      const errorMsg = error.response && error.response.data ? error.response.data.error : error.message;
+      toast.error(errorMsg);
+    }
+  };
+
+  if(loading || programs === undefined) <h1>Loading</h1>
+  
   
   return (
     <Card>
       <Card.Header>
         <h3 className='text-center'>Subscribe to TRAC Carriage reports</h3>
       </Card.Header>
+      {console.log(programs)}
       <Card.Body>
         <Form onSubmit={handleNew}>  
           <section className='form-grid'>      
-            <Form.Control 
-              size='lg'
-              name='ProgramID'
-              type='text'
-              id='ProgramID'
-              list='programList'
-              placeholder='Type to search...'
-              value={formData.ProgramID}
-              onChange={onMutate}
-              maxLength='32'
-              required  
+            <ProgramInput
+              programs={programs}
+              onProgramSelect={handleProgramSelect}
             />
-            {/* <datalist id='programList'>
-              { programs && programs.map((program) => {
-                return (
-                  <option key={program._id} value={program.programtitle} />
-                )
-              })}
-            </datalist> */}
             <Form.Control 
               size='lg'
               type='text'
-              id='RequesterName'
+              id='name'
               placeholder={`Subscriber's Name`}
-              value={formData.RequesterName}
+              value={formData.name}
               onChange={onMutate}
               maxLength='32'
               required  
@@ -128,9 +128,9 @@ const SubscriptionForm = () => {
             <Form.Control 
               size='lg'
               type='text'
-              id='RequesterCompany'
+              id='company'
               placeholder={`Subscriber's Company`}
-              value={formData.RequesterCompany}
+              value={formData.company}
               onChange={onMutate}
               maxLength='32'
               required  
@@ -138,9 +138,9 @@ const SubscriptionForm = () => {
             <Form.Control 
               size='lg'
               type='text'
-              id='RequesterTitle'
+              id='title'
               placeholder={`Subscriber's title`}
-              value={formData.RequesterTitle}
+              value={formData.title}
               onChange={onMutate}
               maxLength='32'
               required  
@@ -148,9 +148,9 @@ const SubscriptionForm = () => {
             <Form.Control 
               size='lg'
               type='text'
-              id='RequesterPhone'
+              id='phone'
               placeholder={`Subscriber's phone number`}
-              value={formData.RequesterPhone}
+              value={formData.phone}
               onChange={onMutate}
               maxLength='32'
               required  
@@ -158,19 +158,19 @@ const SubscriptionForm = () => {
             <Form.Control 
               size='lg'
               type='text'
-              id='RequesterEmail'
+              id='email'
               placeholder={`Subscriber's email`}
-              value={formData.RequesterEmail}
+              value={formData.email}
               onChange={onMutate}
               maxLength='32'
               required 
             />
             <Form.Control 
               size='lg'
-              id='Period'
+              id='subscriptionPeriod'
               list='tracPeriod'
               placeholder='Subscription Period'
-              value={formData.Period}
+              value={formData.subscriptionPeriod}
               onChange={onMutate}
               maxLength='32'
               required 
@@ -187,9 +187,9 @@ const SubscriptionForm = () => {
             <Form.Control 
               size='lg'
               type='text'
-              id='StartDate'
+              id='startDate'
               placeholder='Start Date'
-              value={formData.StartDate}
+              value={formData.startDate}
               onChange={onMutate}
               maxLength='32'
               required
@@ -205,7 +205,7 @@ const SubscriptionForm = () => {
                 id='tou'
                 scrollable='true'
                 >
-                <Terms company={formData.RequesterCompany}/>
+                <Terms company={formData.company}/>
               </Modal>
               <div className="d-block m-auto">
                 <Form.Check type='checkbox' data-testid='terms-check' label='Agree and accept terms' onClick={() => setTermsOfUse(true)} />

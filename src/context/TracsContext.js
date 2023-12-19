@@ -43,6 +43,5 @@ export const TracsContextProvider = ({ children }) => {
     <TracsContext.Provider value={{ ...state, dispatch }}>
       { children }
     </TracsContext.Provider>
-  )
-  
+  )  
 }
