@@ -12,7 +12,7 @@ import Form from 'react-bootstrap/Form'
 import { ProgramsContext } from '../../context/ProgramsContext'
 
 const SubscriptionForm = () => {
-  const { programs, loading } = useContext(ProgramsContext)
+  const programs = useContext(ProgramsContext)
   const { dispatch } = useTracsContext()
   const [ enableButton, setEnableButton ] = useState(false)
   const [ show, setShow ] = useState(false)
@@ -67,16 +67,15 @@ const SubscriptionForm = () => {
   }
 
   const handleNew = async (e) => {
-    e.preventDefault();
-    const trac = { ...formData };
+    e.preventDefault()
+    const trac = { ...formData }
   
     try {
-      const response = await axios.post('https://qd9pusq3ze.execute-api.us-east-1.amazonaws.com/prod/create', trac);
+      const response = await axios.post('https://qd9pusq3ze.execute-api.us-east-1.amazonaws.com/prod/create', trac)
   
       // Assuming the API response includes the necessary data in the format you expect
-      const json = response.data;
-      console.log(response.data.status)
-      dispatch({ type: 'CREATE_TRAC', payload: json });
+      const json = response.data
+      dispatch({ type: 'CREATE_TRAC', payload: json })
       setFormData({
         programId: '',
         name: '',
@@ -86,28 +85,26 @@ const SubscriptionForm = () => {
         email: '',
         subscriptionPeriod: '',
         startDate: ''
-      });
-      setTermsOfUse(false);
+      })
+      setTermsOfUse(false)
       toast.success('You have successfully submitted your carriage service request and will receive a response in 2 to 3 days.', {
         autoClose: 5000
-      });
+      })
   
     } catch (error) {
       // Handle error here. If the response body contains JSON, it can be accessed via error.response.data
-      const errorMsg = error.response && error.response.data ? error.response.data.error : error.message;
-      toast.error(errorMsg);
+      const errorMsg = error.response && error.response.data ? error.response.data.error : error.message
+      toast.error(errorMsg, {
+        autoClose: 5000
+      })
     }
-  };
-
-  if(loading || programs === undefined) <h1>Loading</h1>
-  
+  }
   
   return (
     <Card>
       <Card.Header>
         <h3 className='text-center'>Subscribe to TRAC Carriage reports</h3>
       </Card.Header>
-      {console.log(programs)}
       <Card.Body>
         <Form onSubmit={handleNew}>  
           <section className='form-grid'>      
@@ -115,6 +112,7 @@ const SubscriptionForm = () => {
               programs={programs}
               onProgramSelect={handleProgramSelect}
             />
+            {console.log(programs)}
             <Form.Control 
               size='lg'
               type='text'

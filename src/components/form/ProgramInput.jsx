@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import Form from 'react-bootstrap/Form';
 
 const ProgramInput = ({ programs, onProgramSelect }) => {
+
   const handleSelect = (e) => {
-    const selectedProgram = programs.find(program => program.programtitle === e.target.value);
-    onProgramSelect(selectedProgram ? selectedProgram._id : '');
+    const selectedProgram = programs.find(program => program.title === e.target.value);
+    onProgramSelect(selectedProgram ? selectedProgram.id : '');
   };
 
   return (
@@ -21,7 +22,7 @@ const ProgramInput = ({ programs, onProgramSelect }) => {
       />
       <datalist id='programList'>
         {programs && programs.map((program) => (
-          <option key={program._id} value={program.programtitle} />
+          <option key={program.id} value={program.title} />
           ))}
       </datalist>
     </>

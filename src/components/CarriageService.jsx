@@ -5,7 +5,7 @@ const CarriageService = () => {
   return (
     <div className='container'>
       <div className="d-grid gap-2 mt-4">
-        <Button href='/form' variant='primary' className='btn-x' style={{color: 'white'}}>DO NOT Signup for Carriage Reports</Button>
+        <Button href='/form' variant='primary' className='btn-x' style={{color: 'white'}}>Signup for Carriage Reports</Button>
       </div>
       <div className='text-center'>
         <h1 className='faq-title-row'>Carriage Service</h1>
