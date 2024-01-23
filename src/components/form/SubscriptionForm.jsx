@@ -59,11 +59,14 @@ const SubscriptionForm = () => {
     }))
   } 
 
-  const handleProgramSelect = (programId) => {
-    setFormData((prevState) => ({
-      ...prevState,
-      programId
-    }))
+  const handleIdSelect = (selectedTitle) => {
+    const selectedProgram = programs.find(program => program.title === selectedTitle)
+    if(selectedProgram){
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        programId: selectedProgram.idNumber
+      })) // Sets the selected program ID
+    }
   }
 
   const handleNew = async (e) => {
@@ -110,9 +113,10 @@ const SubscriptionForm = () => {
           <section className='form-grid'>      
             <ProgramInput
               programs={programs}
-              onProgramSelect={handleProgramSelect}
+              onProgramSelect={handleIdSelect}
+              value={formData.programId}
+              onChange={onMutate}
             />
-            {console.log(programs)}
             <Form.Control 
               size='lg'
               type='text'
