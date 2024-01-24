@@ -1,16 +1,16 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import Form from 'react-bootstrap/Form';
 
 const ProgramInput = ({ programs, onProgramSelect }) => {
-  const [ id, setId ] = useState()
 
   const handleSelect = (e) => {
     const selectedProgram = programs.find(program => program.title === e.target.value)
     if(selectedProgram) {
-      onProgramSelect(selectedProgram.title)
-    }
-    
-  };
+      onProgramSelect(selectedProgram)
+    } else {
+      console.log('Program not found:', e.target.value); // Log if the program isn't found
+    }  
+  }
 
   return (
     <>

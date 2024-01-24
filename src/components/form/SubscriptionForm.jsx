@@ -17,6 +17,7 @@ const SubscriptionForm = () => {
   const [ enableButton, setEnableButton ] = useState(false)
   const [ show, setShow ] = useState(false)
   const [ termsOfUse, setTermsOfUse ] = useState(false)
+  // const location = useLocation()
 
   const [ formData, setFormData ] = useState({
     programId: '',
@@ -45,6 +46,7 @@ const SubscriptionForm = () => {
   } = formData
 
   useEffect(() => {
+    console.log(formData)
     const isValid = Object.values(formData).every((value) => value !== '')
     if(termsOfUse && isValid) {
       setEnableButton(!enableButton)
@@ -59,63 +61,57 @@ const SubscriptionForm = () => {
     }))
   } 
 
-  const handleIdSelect = (selectedTitle) => {
-    const selectedProgram = programs.find(program => program.title === selectedTitle)
-    if(selectedProgram){
-      setFormData((prevFormData) => ({
-        ...prevFormData,
-        programId: selectedProgram.idNumber
-      })) // Sets the selected program ID
-    }
+  const handleSelect = (programId) => {
+    console.log('Selected Program ID:', programId);
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      programId: programId.id
+    })) // Sets the selected program ID
   }
-
+  
   const handleNew = async (e) => {
     e.preventDefault()
     const trac = { ...formData }
-  
+    const infoToast = toast.info('Working on it...')
     try {
+      // console.log(onProgramSelect)
       const response = await axios.post('https://qd9pusq3ze.execute-api.us-east-1.amazonaws.com/prod/create', trac)
   
       // Assuming the API response includes the necessary data in the format you expect
       const json = response.data
       dispatch({ type: 'CREATE_TRAC', payload: json })
-      setFormData({
-        programId: '',
-        name: '',
-        company: '',
-        title: '',
-        phone: '',
-        email: '',
-        subscriptionPeriod: '',
-        startDate: ''
-      })
-      setTermsOfUse(false)
+      toast.dismiss(infoToast)
       toast.success('You have successfully submitted your carriage service request and will receive a response in 2 to 3 days.', {
-        autoClose: 5000
+        autoClose: 5000,
       })
-  
+      setTimeout(() => {
+        window.location.reload(true)
+      }, 5000) 
     } catch (error) {
       // Handle error here. If the response body contains JSON, it can be accessed via error.response.data
       const errorMsg = error.response && error.response.data ? error.response.data.error : error.message
+      toast.dismiss(infoToast)
       toast.error(errorMsg, {
         autoClose: 5000
       })
+      setTimeout(() => {
+        window.location.reload(true)
+      }, 5000)
     }
   }
   
   return (
     <Card>
       <Card.Header>
-        <h3 className='text-center'>Subscribe to TRAC Carriage reports</h3>
+        <h3 className='text-center'>Subscribe to Carriage reports</h3>
       </Card.Header>
       <Card.Body>
         <Form onSubmit={handleNew}>  
           <section className='form-grid'>      
             <ProgramInput
               programs={programs}
-              onProgramSelect={handleIdSelect}
+              onProgramSelect={handleSelect}
               value={formData.programId}
-              onChange={onMutate}
             />
             <Form.Control 
               size='lg'
