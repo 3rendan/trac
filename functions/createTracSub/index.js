@@ -3,12 +3,17 @@ const { v4: uuidv4 } = require('uuid'); // Import the UUID function
 const dynamoDB = new AWS.DynamoDB.DocumentClient();
 
 exports.handler = async (event) => {
-  
+    const allowedOrigins = ['http://localhost:5656']
+    let { headers: { origin } } = event
+        
+    
     let body;
     let statusCode = 200;
-    const headers = {
-        "Content-Type": "application/json",
-        "Access-Control-Allow-Origin": "*"
+    let corsHeaders = {
+        'Access-Control-Allow-Origin': allowedOrigins.includes(origin) ? origin : '',
+        'Access-Control-Allow-Methods': 'POST',
+        'Access-Control-Allow-Headers': 'Content-Type',
+        'Content-Type': 'application/json'
     };
 
     try {
@@ -39,6 +44,6 @@ exports.handler = async (event) => {
     return {
         statusCode,
         body,
-        headers
+        headers: corsHeaders
     };
 };

@@ -1,5 +1,5 @@
-import React from 'react';
-import Form from 'react-bootstrap/Form';
+import React from 'react'
+import Form from 'react-bootstrap/Form'
 
 const ProgramInput = ({ programs, onProgramSelect }) => {
 
@@ -8,12 +8,13 @@ const ProgramInput = ({ programs, onProgramSelect }) => {
     if(selectedProgram) {
       onProgramSelect(selectedProgram)
     } else {
-      console.log('Program not found:', e.target.value); // Log if the program isn't found
+      console.log('Program not found:', e.target.value) // Log if the program isn't found
     }  
   }
 
   return (
-    <>
+    <Form.Group>
+      <Form.Label>Program title</Form.Label>
       <Form.Control 
         size='lg'
         type='text'
@@ -29,8 +30,8 @@ const ProgramInput = ({ programs, onProgramSelect }) => {
           <option key={program.idNumber} value={program.title} />
           ))}
       </datalist>
-    </>
-  );
-};
+    </Form.Group>
+  )
+}
 
-export default ProgramInput;
+export default ProgramInput
