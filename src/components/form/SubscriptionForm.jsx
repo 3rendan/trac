@@ -18,6 +18,7 @@ const SubscriptionForm = () => {
   const { dispatch } = useTracsContext()
   const [enableButton, setEnableButton] = useState(false)
   const [show, setShow] = useState(false)
+  const [ cost, setCost ] = useState()
   const [termsOfUse, setTermsOfUse] = useState(false)
   const [formData, setFormData] = useState({
     programId: '',
@@ -33,7 +34,7 @@ const SubscriptionForm = () => {
 
   useEffect(() => {
     const isValid = Object.values(formData).every(value => value !== '')
-    setEnableButton(termsOfUse && isValid)
+    setEnableButton(termsOfUse && isValid && onPaymentSuccess)
   }, [formData, termsOfUse])
 
   const onTextChange = (e) => {
@@ -64,6 +65,29 @@ const SubscriptionForm = () => {
       paymentToken: token
     }))
     toast.success('Payment successful')
+    submitForm()
+  }
+
+  const submitForm = async () => {
+    const trac = { ...formData }
+    const infoToast = toast.info('Working on it...')
+    try {
+      const response = await axios.post('https://qd9pusq3ze.execute-api.us-east-1.amazonaws.com/prod/create', trac)
+      const json = response.data
+      dispatch({ type: 'CREATE_TRAC', payload: json })
+      toast.dismiss(infoToast)
+      toast.success('You have successfully submitted your carriage service request and will receive a response in 2 to 3 days.', {
+        autoClose: 5000,
+      })
+      setTimeout(() => window.location.reload(true), 5000)
+    } catch (error) {
+      const errorMsg = error.response && error.response.data ? error.response.data.error : error.message
+      toast.dismiss(infoToast)
+      toast.error(errorMsg, {
+        autoClose: 5000
+      })
+      setTimeout(() => window.location.reload(true), 5000)
+    }
   }
 
   const handleNew = async (e) => {
@@ -209,18 +233,18 @@ const SubscriptionForm = () => {
               onHide={() => setShow(false)}
               id='tou'
               scrollable='true'
-              >
-                <Terms company={formData.company}/>
-            </Modal>              
+            >
+              <Terms company={formData.company}/>
+            </Modal> 
             <div className='d-block m-auto'>
               <Form.Check type='checkbox' data-testid='terms-check' label='Agree and accept terms' onClick={() => setTermsOfUse(true)} />
             </div>
           </div>                     
-          <SquareForm 
-            onPaymentSuccess={onPaymentSuccess} 
-          />
-          <Button type='submit' disabled={!enableButton}>Register</Button>
         </Form>
+        <SquareForm 
+          onPaymentSuccess={onPaymentSuccess} 
+          cost={cost}
+        />
       </Card.Body>
     </Card>
   )

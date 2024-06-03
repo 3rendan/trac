@@ -28,6 +28,26 @@
   }
 }
 
+.btn-pay, .btn-register {
+  width: 60%;
+  display: block;
+  margin: auto;
+  text-transform: uppercase;
+  margin-bottom: 1rem;
+  border: .5px solid $primaryText;
+  padding: .25rem;
+  border-radius: 5px;
+  color: $primaryText;
+}
+
+.btn-pay {
+  background-color: green;
+}
+
+.btn-register {
+  background-color: $primaryBackground;
+}
+
 .btn-tou {
   word-wrap: nowrap;
   background-color: $primaryPop;
