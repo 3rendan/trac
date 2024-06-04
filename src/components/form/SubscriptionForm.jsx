@@ -31,6 +31,15 @@ const SubscriptionForm = () => {
     startDate: '',
     paymentToken: ''  // Add a field to store payment token
   })
+  const tempCosts = {
+    '1 Month': 100,
+    '2 Month': 200,
+    '3 Month': 300,
+    '4 Month': 400,
+    '5 Month': 500,
+    '6 Month': 600,
+    '1 Year': 1000
+  }
 
   useEffect(() => {
     const isValid = Object.values(formData).every(value => value !== '')
@@ -43,6 +52,10 @@ const SubscriptionForm = () => {
       ...prevState,
       [id]: value
     }));
+    if (id === 'subscriptionPeriod') {
+      const selectedCost = tempCosts[value];
+      setCost(selectedCost);  // Update the cost state with the mapped value
+    }
   };
 
   const onDateChange = (date) => {
@@ -241,6 +254,9 @@ const SubscriptionForm = () => {
             </div>
           </div>                     
         </Form>
+        <div style={{ display: cost ? 'block' : 'none' }}>
+          <p>You will be charged: ${cost}</p>
+        </div>
         <SquareForm 
           onPaymentSuccess={onPaymentSuccess} 
           cost={cost}

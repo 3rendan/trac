@@ -111,13 +111,13 @@ const SquarePaymentForm = (props)  => {
       verificationToken,
       idempotencyKey: crypto.randomUUID(),
     });
-
-    const response = await fetch('/payment', {
+  
+    const response = await fetch('https://qd9pusq3ze.execute-api.us-east-1.amazonaws.com/sandbox/payments', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body,
     });
-
+  
     if (response.ok) {
       return response.json();
     } else {
@@ -125,7 +125,7 @@ const SquarePaymentForm = (props)  => {
       throw new Error(errorBody);
     }
   }
-
+  
   const displayPaymentResults = (status) => {
     const statusContainer = document.getElementById('payment-status-container');
     if (status === 'SUCCESS') {
