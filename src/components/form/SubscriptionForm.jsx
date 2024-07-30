@@ -27,7 +27,7 @@ const SubscriptionForm = () => {
     title: '',
     phone: '',
     email: '',
-    subscriptionPeriod: '',
+    subscriptionDuration: '',
     startDate: '',
     paymentToken: ''  // Add a field to store payment token
   })
@@ -52,7 +52,7 @@ const SubscriptionForm = () => {
       ...prevState,
       [id]: value
     }));
-    if (id === 'subscriptionPeriod') {
+    if (id === 'subscriptionDuration') {
       const selectedCost = tempCosts[value];
       setCost(selectedCost);  // Update the cost state with the mapped value
     }
@@ -85,7 +85,7 @@ const SubscriptionForm = () => {
     const trac = { ...formData }
     const infoToast = toast.info('Working on it...')
     try {
-      const response = await axios.post('https://qd9pusq3ze.execute-api.us-east-1.amazonaws.com/prod/create', trac)
+      const response = await axios.post('https://qd9pusq3ze.execute-api.us-east-1.amazonaws.com/sandbox/create', trac)
       const json = response.data
       dispatch({ type: 'CREATE_TRAC', payload: json })
       toast.dismiss(infoToast)
@@ -208,9 +208,9 @@ const SubscriptionForm = () => {
               <Form.Label>Subscription duration</Form.Label>
               <Form.Control 
                 size='lg'
-                id='subscriptionPeriod'
+                id='subscriptionDuration'
                 list='tracPeriod'
-                value={formData.subscriptionPeriod}
+                value={formData.subscriptionDuration}
                 onChange={onTextChange}
                 maxLength='32'
                 required 
@@ -260,6 +260,7 @@ const SubscriptionForm = () => {
         <SquareForm 
           onPaymentSuccess={onPaymentSuccess} 
           cost={cost}
+          formData={formData}
         />
       </Card.Body>
     </Card>

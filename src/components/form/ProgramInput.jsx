@@ -8,7 +8,7 @@ const ProgramInput = ({ programs, onProgramSelect }) => {
     if(selectedProgram) {
       onProgramSelect(selectedProgram)
     } else {
-      console.log('Program not found:', e.target.value) // Log if the program isn't found
+      // console.log('Program not found:', e.target.value) // Log if the program isn't found
     }  
   }
 

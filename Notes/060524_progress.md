@@ -2,7 +2,7 @@
 
 ## Where it's at
 
-* serveless lambda fxnction is working to take a post to '/payments', post it to Square, and recieve a return id along with other info
+* serveless lambda function is working to take a post to '/payments', post it to Square, and recieve a return id along with other info
   * the id can probably be passed in the form to record the payment
 
 ## What is needed?
