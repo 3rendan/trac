@@ -1,25 +1,24 @@
 import { useEffect, useState, useContext } from 'react'
 import axios from 'axios'
-import ReactDatePicker from 'react-datepicker';
-import 'react-datepicker/dist/react-datepicker.css';
+import ReactDatePicker from 'react-datepicker'
+import 'react-datepicker/dist/react-datepicker.css'
 import { toast } from 'react-toastify'
 import Modal from 'react-bootstrap/Modal'
-import Button from 'react-bootstrap/Button'
 import Card from 'react-bootstrap/Card'
 import Form from 'react-bootstrap/Form'
-import { useTracsContext } from '../../hooks/useTracsContext'
 import { ProgramsContext } from '../../context/ProgramsContext'
+import { TracsContext } from '../../context/TracsContext'
 import ProgramInput from './ProgramInput'
 import Terms from './Terms'
 import SquareForm from './SquareForm'  // Import SquareForm
 
 const SubscriptionForm = () => {
   const programs = useContext(ProgramsContext)
-  const { dispatch } = useTracsContext()
-  const [enableButton, setEnableButton] = useState(false)
+  const { submitTrac } = useContext(TracsContext)
   const [show, setShow] = useState(false)
-  const [ cost, setCost ] = useState()
+  const [cost, setCost] = useState()
   const [termsOfUse, setTermsOfUse] = useState(false)
+  const [ enableButton, setEnableButton ] = useState(false)
   const [formData, setFormData] = useState({
     programId: '',
     name: '',
@@ -29,7 +28,7 @@ const SubscriptionForm = () => {
     email: '',
     subscriptionDuration: '',
     startDate: '',
-    paymentToken: ''  // Add a field to store payment token
+    paymentToken: ''
   })
   const tempCosts = {
     '1 Month': 100,
@@ -42,28 +41,28 @@ const SubscriptionForm = () => {
   }
 
   useEffect(() => {
-    const isValid = Object.values(formData).every(value => value !== '')
-    setEnableButton(termsOfUse && isValid && onPaymentSuccess)
+    const isValid = Object.values(formData).every(value => value && value !== '')
+    setEnableButton(termsOfUse && isValid)
   }, [formData, termsOfUse])
 
   const onTextChange = (e) => {
-    const { id, value } = e.target;
+    const { id, value } = e.target
     setFormData(prevState => ({
       ...prevState,
       [id]: value
-    }));
+    }))
     if (id === 'subscriptionDuration') {
-      const selectedCost = tempCosts[value];
-      setCost(selectedCost);  // Update the cost state with the mapped value
+      const selectedCost = tempCosts[value]
+      setCost(selectedCost)  // Update the cost state with the mapped value
     }
-  };
+  }
 
   const onDateChange = (date) => {
     setFormData(prevState => ({
       ...prevState,
       startDate: date
-    }));
-  };
+    }))
+  }
 
   const handleSelect = (programId) => {
     setFormData(prevFormData => ({
@@ -72,22 +71,21 @@ const SubscriptionForm = () => {
     }))
   }
 
-  const onPaymentSuccess = (token) => {
-    setFormData(prevFormData => ({
-      ...prevFormData,
+  const onPaymentSuccess = async (token) => {
+    const updatedFormData = {
+      ...formData,
       paymentToken: token
-    }))
+    }
+  
+    setFormData(updatedFormData)
     toast.success('Payment successful')
-    submitForm()
+    submitForm(updatedFormData)
   }
 
-  const submitForm = async () => {
-    const trac = { ...formData }
+  const submitForm = async (data) => {
     const infoToast = toast.info('Working on it...')
     try {
-      const response = await axios.post('https://qd9pusq3ze.execute-api.us-east-1.amazonaws.com/sandbox/create', trac)
-      const json = response.data
-      dispatch({ type: 'CREATE_TRAC', payload: json })
+      const response = await submitTrac(data)
       toast.dismiss(infoToast)
       toast.success('You have successfully submitted your carriage service request and will receive a response in 2 to 3 days.', {
         autoClose: 5000,
@@ -99,36 +97,11 @@ const SubscriptionForm = () => {
       toast.error(errorMsg, {
         autoClose: 5000
       })
-      setTimeout(() => window.location.reload(true), 5000)
     }
   }
 
-  const handleNew = async (e) => {
-    e.preventDefault()
-    if (!formData.paymentToken) {
-      toast.error('Payment information is required')
-      return
-    }
-
-    const trac = { ...formData }
-    const infoToast = toast.info('Working on it...')
-    try {
-      const response = await axios.post('https://qd9pusq3ze.execute-api.us-east-1.amazonaws.com/prod/create', trac)
-      const json = response.data
-      dispatch({ type: 'CREATE_TRAC', payload: json })
-      toast.dismiss(infoToast)
-      toast.success('You have successfully submitted your carriage service request and will receive a response in 2 to 3 days.', {
-        autoClose: 5000,
-      })
-      setTimeout(() => window.location.reload(true), 5000)
-    } catch (error) {
-      const errorMsg = error.response && error.response.data ? error.response.data.error : error.message
-      toast.dismiss(infoToast)
-      toast.error(errorMsg, {
-        autoClose: 5000
-      })
-      setTimeout(() => window.location.reload(true), 5000)
-    }
+  const handleNew = (e) => {
+    e.preventDefault() // This will prevent form submission until payment is successfully processed.
   }
 
   return (
@@ -236,21 +209,21 @@ const SubscriptionForm = () => {
                 required
               />
             </Form.Group>
-            </section>
+          </section>
           <div className='mt-3 mb-3 tou-grid'>
             <div className='tou-modal-link d-block m-auto' onClick={() => setShow(true)}>
-              <span className='tou-modal-link'>Terms of Use</span>
+              Terms of Use
             </div>
             <Modal
               show={show}
               onHide={() => setShow(false)}
               id='tou'
-              scrollable='true'
+              scrollable={true}
             >
               <Terms company={formData.company}/>
             </Modal> 
             <div className='d-block m-auto'>
-              <Form.Check type='checkbox' data-testid='terms-check' label='Agree and accept terms' onClick={() => setTermsOfUse(true)} />
+              <Form.Check type='checkbox' label='Agree and accept terms' onClick={() => setTermsOfUse(!termsOfUse)} />
             </div>
           </div>                     
         </Form>
@@ -261,6 +234,7 @@ const SubscriptionForm = () => {
           onPaymentSuccess={onPaymentSuccess} 
           cost={cost}
           formData={formData}
+          // enableButton={enableButton}
         />
       </Card.Body>
     </Card>

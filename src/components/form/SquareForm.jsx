@@ -1,8 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react'
 
-const SquarePaymentForm = ({cost, onPaymentSuccess})  => {
+const SquarePaymentForm = ({ cost, onPaymentSuccess, enableButton }) => {
   const appId = 'sandbox-sq0idb-1Rc6WQaS0GHD8JmvpmaVOg' // SANDBOX
   const locationId = 'XK6VJKAS5R1ZM'
+  const accessToken = 'EAAAEPo98hU3Eo7nv9Lh1J9L9FrvWz79jii4gmm5ciZw3f1noIFxMuxdjpGuwjDD'
   const cardRef = useRef(null)
   const cardButtonRef = useRef(null)
   const [sdkReady, setSdkReady] = useState(false)
@@ -16,7 +17,6 @@ const SquarePaymentForm = ({cost, onPaymentSuccess})  => {
         setTimeout(loadSquareSdk, 500)
       }
     }
-
     loadSquareSdk()
   }, [])
 
@@ -25,7 +25,7 @@ const SquarePaymentForm = ({cost, onPaymentSuccess})  => {
       return
     }
 
-    const initializeCard = async() =>{
+    const initializeCard = async () => {
       let paymentsInstance
       try {
         paymentsInstance = window.Square.payments(appId, locationId)
@@ -46,8 +46,7 @@ const SquarePaymentForm = ({cost, onPaymentSuccess})  => {
     initializeCard()
   }, [sdkReady])
 
-  // Inside SquarePaymentForm component
-  const handlePaymentMethodSubmission = async(event) =>{
+  const handlePaymentMethodSubmission = async (event) => {
     event.preventDefault()
 
     try {
@@ -66,7 +65,7 @@ const SquarePaymentForm = ({cost, onPaymentSuccess})  => {
     }
   }
 
-  const tokenize = async(paymentMethod) =>{
+  const tokenize = async (paymentMethod) => {
     const tokenResult = await paymentMethod.tokenize()
     if (tokenResult.status === 'OK') {
       return tokenResult.token
@@ -79,18 +78,17 @@ const SquarePaymentForm = ({cost, onPaymentSuccess})  => {
     }
   }
 
-  const verifyBuyer = async(token) => {
+  const verifyBuyer = async (token, formData) => {
+    const { name } = formData
+    const firstName = name.split(' ')[0]
+    const lastName = name.split(' ')[1]
     const verificationDetails = {
-      amount: '1.00',
       billingContact: {
-        givenName: 'John',
-        familyName: 'Doe',
-        email: 'john.doe@square.example',
-        phone: '3214563987',
-        addressLines: ['123 Main Street', 'Apartment 1'],
-        city: 'London',
-        state: 'LND',
-        countryCode: 'GB',
+        givenName: firstName,
+        familyName: lastName,
+        email: formData.email,
+        phone: formData.phone,
+        addressLines: []
       },
       currencyCode: 'USD',
       intent: 'CHARGE',
@@ -100,24 +98,27 @@ const SquarePaymentForm = ({cost, onPaymentSuccess})  => {
     return verificationResults.token
   }
 
-  const createPayment = async(token, verificationToken) => {
+  const createPayment = async (token, verificationToken) => {
     const body = JSON.stringify({
       locationId,
       sourceId: token,
       verificationToken,
-      amount_money: {  // Ensure this object is correctly formatted
-        amount: cost,  // Example amount replace with the actual amount you want to charge
+      amount_money: {
+        amount: cost,
         currency: "USD"
       },
       idempotencyKey: crypto.randomUUID(),
     })
-  
+
     const response = await fetch('https://qd9pusq3ze.execute-api.us-east-1.amazonaws.com/sandbox/payments', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${accessToken}` // Include access token here
+      },
       body,
     })
-  
+
     if (response.ok) {
       return response.json()
     } else {
@@ -125,7 +126,7 @@ const SquarePaymentForm = ({cost, onPaymentSuccess})  => {
       throw new Error(errorBody)
     }
   }
-  
+
   const displayPaymentResults = (status) => {
     const statusContainer = document.getElementById('payment-status-container')
     if (status === 'SUCCESS') {

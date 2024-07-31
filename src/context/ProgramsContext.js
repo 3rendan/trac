@@ -6,8 +6,7 @@ export const ProgramsContext = createContext();
 export const ProgramsProvider = ({ children }) => {
     const [ programs, setPrograms ] = useState([]);
 
-    useEffect(() => {
-        
+    useEffect(() => {        
         fetchPrograms();
     }, []);
     

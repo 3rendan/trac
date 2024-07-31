@@ -1,47 +1,26 @@
-import { createContext, useReducer, useEffect } from 'react'
+import React, { createContext, useContext } from 'react'
+import axios from 'axios'
 
 export const TracsContext = createContext()
 
-export const tracReducer = (state, action) => {
-  switch (action.type) {
-    case 'SET_TRACS':
-      return {
-        tracs: action.payload
-      }
-    case 'SET_TRAC':
-      return {
-        registration: state.tracs.filter((trac) => trac._id === action.payload._id)
-      }
-    case 'CREATE_TRAC':
-      return {
-        tracs: [action.payload, state.tracs]
-      }
-    case 'UPDATE_TRAC':
-      return {
-        registration: [action.payload, state.registration]
-      }
-    case 'DELETE_TRAC':
-      return {
-        tracs: state.tracs.filter((trac) => trac._id !== action.payload._id)
-      }
-    default:
-      return state
+export const useTracsContext = () => useContext(TracsContext)
+
+export const TracsProvider = ({ children }) => {
+
+  // Function to generate a new Program Submission
+  const submitTrac = async (submission) => {
+    try {
+      const res = await axios.post('https://qd9pusq3ze.execute-api.us-east-1.amazonaws.com/sandbox/create', submission)
+      return res
+    } catch (error) {
+      console.error('Error making the submission:', error)
+      throw error  // Ensure errors are thrown so they can be caught in calling functions
+    }
   }
-}
-
-export const TracsContextProvider = ({ children }) => {
-  const [state, dispatch] = useReducer(tracReducer, {'tracs': null}, () => {
-    const localData = localStorage.getItem('tracs')
-    return localData ? JSON.parse(localData) : []
-  })
   
-  useEffect(() => {
-    localStorage.setItem('tracs', JSON.stringify(state))
-  }, [state])
-
   return (
-    <TracsContext.Provider value={{ ...state, dispatch }}>
-      { children }
+    <TracsContext.Provider value={{ submitTrac }}>
+      {children}
     </TracsContext.Provider>
-  )  
+  )
 }
