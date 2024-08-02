@@ -2,6 +2,7 @@ import React from 'react'
 import Form from 'react-bootstrap/Form'
 
 const ProgramInput = ({ programs, onProgramSelect }) => {
+  const programsArr = Object.values(programs)
 
   const handleSelect = (e) => {
     const selectedProgram = programs.find(program => program.title === e.target.value)
@@ -26,7 +27,7 @@ const ProgramInput = ({ programs, onProgramSelect }) => {
         required
       />
       <datalist id='programList'>
-        {programs && programs.map((program) => (
+        {programs && programsArr.map((program) => (
           <option key={program.idNumber} value={program.title} />
           ))}
       </datalist>

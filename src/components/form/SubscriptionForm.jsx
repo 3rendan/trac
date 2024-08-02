@@ -13,7 +13,9 @@ import Terms from './Terms'
 import SquareForm from './SquareForm'  // Import SquareForm
 
 const SubscriptionForm = () => {
-  const programs = useContext(ProgramsContext)
+  const accessToken = 'EAAAEPo98hU3Eo7nv9Lh1J9L9FrvWz79jii4gmm5ciZw3f1noIFxMuxdjpGuwjDD'
+  const locationId = 'XK6VJKAS5R1ZM'
+  const { programs, loadingPrograms } = useContext(ProgramsContext)
   const { submitTrac } = useContext(TracsContext)
   const [show, setShow] = useState(false)
   const [cost, setCost] = useState()
@@ -71,38 +73,24 @@ const SubscriptionForm = () => {
     }))
   }
 
-  const onPaymentSuccess = async (token) => {
-    const updatedFormData = {
-      ...formData,
-      paymentToken: token
-    }
-  
-    setFormData(updatedFormData)
-    toast.success('Payment successful')
-    submitForm(updatedFormData)
-  }
+  const handlePaymentSuccess = (paymentToken) => {
+    setFormData({ ...formData, paymentToken }); // Update formData with the payment token
+    submitFormData(); // Function to submit all data to DynamoDB
+  };
 
-  const submitForm = async (data) => {
-    const infoToast = toast.info('Working on it...')
+  const submitFormData = async (formData) => {
+    console.log(formData)
     try {
-      const response = await submitTrac(data)
-      toast.dismiss(infoToast)
-      toast.success('You have successfully submitted your carriage service request and will receive a response in 2 to 3 days.', {
-        autoClose: 5000,
-      })
-      setTimeout(() => window.location.reload(true), 5000)
+      await submitTrac(formData); // Assuming submitTrac sends data to DynamoDB
+      toast.success('Subscription successful!');
     } catch (error) {
-      const errorMsg = error.response && error.response.data ? error.response.data.error : error.message
-      toast.dismiss(infoToast)
-      toast.error(errorMsg, {
-        autoClose: 5000
-      })
+      toast.error('Failed to subscribe: ' + error.message);
     }
-  }
+  };
 
-  const handleNew = (e) => {
-    e.preventDefault() // This will prevent form submission until payment is successfully processed.
-  }
+
+  
+  if(loadingPrograms) return 'waiting...'
 
   return (
     <Card>
@@ -110,7 +98,7 @@ const SubscriptionForm = () => {
         <h3 className='text-center'>Subscribe to Carriage reports</h3>
       </Card.Header>
       <Card.Body>
-        <Form onSubmit={handleNew}>
+        <Form>
           <ProgramInput
             programs={programs}
             onProgramSelect={handleSelect}
@@ -231,10 +219,9 @@ const SubscriptionForm = () => {
           <p>You will be charged: ${cost}</p>
         </div>
         <SquareForm 
-          onPaymentSuccess={onPaymentSuccess} 
+          onPaymentSuccess={handlePaymentSuccess} 
           cost={cost}
           formData={formData}
-          // enableButton={enableButton}
         />
       </Card.Body>
     </Card>

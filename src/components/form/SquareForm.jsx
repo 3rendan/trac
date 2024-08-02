@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react'
+import axios from 'axios'
 
-const SquarePaymentForm = ({ cost, onPaymentSuccess, enableButton }) => {
+const SquarePaymentForm = ({ cost, onPaymentSuccess, formData }) => {
   const appId = 'sandbox-sq0idb-1Rc6WQaS0GHD8JmvpmaVOg' // SANDBOX
   const locationId = 'XK6VJKAS5R1ZM'
   const accessToken = 'EAAAEPo98hU3Eo7nv9Lh1J9L9FrvWz79jii4gmm5ciZw3f1noIFxMuxdjpGuwjDD'
@@ -9,7 +10,7 @@ const SquarePaymentForm = ({ cost, onPaymentSuccess, enableButton }) => {
   const [sdkReady, setSdkReady] = useState(false)
 
   useEffect(() => {
-    function loadSquareSdk() {
+    const loadSquareSdk = () =>{
       if (window.Square) {
         setSdkReady(true)
       } else {
@@ -46,25 +47,6 @@ const SquarePaymentForm = ({ cost, onPaymentSuccess, enableButton }) => {
     initializeCard()
   }, [sdkReady])
 
-  const handlePaymentMethodSubmission = async (event) => {
-    event.preventDefault()
-
-    try {
-      const card = cardRef.current
-      cardButtonRef.current.disabled = true // Disables the submit button
-      const token = await tokenize(card)
-      const verificationToken = await verifyBuyer(token)
-      const paymentResults = await createPayment(token, verificationToken)
-      onPaymentSuccess(token) // Pass the payment token to parent component
-      displayPaymentResults('SUCCESS')
-      console.debug('Payment Success', paymentResults)
-    } catch (error) {
-      cardButtonRef.current.disabled = false
-      displayPaymentResults('FAILURE')
-      console.error('Payment failure:', error.message)
-    }
-  }
-
   const tokenize = async (paymentMethod) => {
     const tokenResult = await paymentMethod.tokenize()
     if (tokenResult.status === 'OK') {
@@ -78,70 +60,53 @@ const SquarePaymentForm = ({ cost, onPaymentSuccess, enableButton }) => {
     }
   }
 
-  const verifyBuyer = async (token, formData) => {
-    const { name } = formData
-    const firstName = name.split(' ')[0]
-    const lastName = name.split(' ')[1]
-    const verificationDetails = {
-      billingContact: {
-        givenName: firstName,
-        familyName: lastName,
-        email: formData.email,
-        phone: formData.phone,
-        addressLines: []
-      },
-      currencyCode: 'USD',
-      intent: 'CHARGE',
+  const submitPayment = async (token, amount) => {
+    console.log(token, amount)
+    try {
+        const response = await fetch('https://qd9pusq3ze.execute-api.us-east-1.amazonaws.com/sandbox/payments', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ token, amount })
+        });
+
+        const data = await response.json();
+        if (response.ok) {
+            return { success: true, data: data };
+        } else {
+            throw new Error(data.error || 'Payment failed');
+        }
+    } catch (error) {
+        return { success: false, error: error.message };
     }
-    const paymentsInstance = window.Square.payments(appId, locationId)
-    const verificationResults = await paymentsInstance.verifyBuyer(token, verificationDetails)
-    return verificationResults.token
-  }
+};
 
-  const createPayment = async (token, verificationToken) => {
-    const body = JSON.stringify({
-      locationId,
-      sourceId: token,
-      verificationToken,
-      amount_money: {
-        amount: cost,
-        currency: "USD"
-      },
-      idempotencyKey: crypto.randomUUID(),
-    })
-
-    const response = await fetch('https://qd9pusq3ze.execute-api.us-east-1.amazonaws.com/sandbox/payments', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${accessToken}` // Include access token here
-      },
-      body,
-    })
-
-    if (response.ok) {
-      return response.json()
-    } else {
-      const errorBody = await response.text()
-      throw new Error(errorBody)
+  
+  const handleSubmit = async (event) => {
+    event.preventDefault()
+    try {
+      const card = cardRef.current;
+      const token = await tokenize(card);
+      console.log(await token)
+      const paymentResults = await submitPayment(token); // Function to submit payment to Square
+      if (paymentResults.success) {
+        onPaymentSuccess(paymentResults.token); // Notify parent component
+      } else {
+        console.error('Payment failed:', paymentResults.error);
+      }
+    } catch (error) {
+      console.error('Payment processing error:', error);
     }
-  }
-
-  const displayPaymentResults = (status) => {
-    const statusContainer = document.getElementById('payment-status-container')
-    if (status === 'SUCCESS') {
-      console.log('success')
-    } else {
-      console.log('fail')
-    }
-  }
-
+  };
+  
   return (
-    <form onSubmit={handlePaymentMethodSubmission}>
+    <form onSubmit={handleSubmit}>
       <div id="card-container"></div>
       <button ref={cardButtonRef} className="btn-pay" type="submit">Pay</button>
     </form>
-  )
+  );
 }
+  
 
 export default SquarePaymentForm

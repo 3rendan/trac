@@ -6,9 +6,8 @@ export const TracsContext = createContext()
 export const useTracsContext = () => useContext(TracsContext)
 
 export const TracsProvider = ({ children }) => {
-
-  // Function to generate a new Program Submission
-  const submitTrac = async (submission) => {
+  const submitTrac = async (e, submission) => {
+    e.preventDefault()
     try {
       const res = await axios.post('https://qd9pusq3ze.execute-api.us-east-1.amazonaws.com/sandbox/create', submission)
       return res

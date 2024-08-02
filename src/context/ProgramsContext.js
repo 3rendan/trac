@@ -5,6 +5,7 @@ export const ProgramsContext = createContext();
 
 export const ProgramsProvider = ({ children }) => {
     const [ programs, setPrograms ] = useState([]);
+    const [ loadingPrograms, setLoadingPrograms ] = useState(true)
 
     useEffect(() => {        
         fetchPrograms();
@@ -26,12 +27,13 @@ export const ProgramsProvider = ({ children }) => {
                 return itemPrograms;
             });
             setPrograms(transformedPrograms)
+            setLoadingPrograms(false)
         } catch (error) {
             console.error('Error fetching programs:', error)
         }
     };
     return (
-        <ProgramsContext.Provider value={programs}>
+        <ProgramsContext.Provider value={{programs, loadingPrograms}}>
             {children}
         </ProgramsContext.Provider>
     );
