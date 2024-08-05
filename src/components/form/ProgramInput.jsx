@@ -9,7 +9,7 @@ const ProgramInput = ({ programs, onProgramSelect }) => {
     if(selectedProgram) {
       onProgramSelect(selectedProgram)
     } else {
-      // console.log('Program not found:', e.target.value) // Log if the program isn't found
+      console.log('Program not found:', e.target.value) // Log if the program isn't found
     }  
   }
 
@@ -23,7 +23,6 @@ const ProgramInput = ({ programs, onProgramSelect }) => {
         list='programList'
         placeholder='Type to search...'
         onChange={handleSelect}
-        maxLength='32'
         required
       />
       <datalist id='programList'>

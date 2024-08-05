@@ -19,6 +19,7 @@ const SubscriptionForm = () => {
   const { submitTrac } = useContext(TracsContext)
   const [show, setShow] = useState(false)
   const [cost, setCost] = useState()
+  const [ programTitle, setProgramTitle ] = useState()
   const [termsOfUse, setTermsOfUse] = useState(false)
   const [ enableButton, setEnableButton ] = useState(false)
   const [formData, setFormData] = useState({
@@ -66,11 +67,12 @@ const SubscriptionForm = () => {
     }))
   }
 
-  const handleSelect = (programId) => {
+  const handleSelect = (program) => {
     setFormData(prevFormData => ({
       ...prevFormData,
-      programId: programId.id
+      programId: program.id
     }))
+    setProgramTitle(program.title)
   }
 
   const handlePaymentSuccess = (paymentToken) => {
@@ -218,10 +220,12 @@ const SubscriptionForm = () => {
         <div style={{ display: cost ? 'block' : 'none' }}>
           <p>You will be charged: ${cost}</p>
         </div>
+        { console.log(programTitle)}
         <SquareForm 
           onPaymentSuccess={handlePaymentSuccess} 
           cost={cost}
           formData={formData}
+          programTitle={programTitle}
         />
       </Card.Body>
     </Card>

@@ -5,9 +5,9 @@ const ALLOWED_ORIGINS = process.env.ALLOWED_ORIGINS ? JSON.parse(process.env.ALL
 
 exports.handler = async (event) => {
   const { headers: { origin }, path } = event;
-  const { token, amount } = JSON.parse(event.body)
+  const paymentRequest = event.body
   const { paidRequest } = JSON.parse(event.body)
-  console.info(event)
+  console.info(path)
     let corsHeaders = {
         'Access-Control-Allow-Origin': ALLOWED_ORIGINS.includes(origin) ? origin : '',
         'Access-Control-Allow-Methods': 'POST, GET, OPTIONS',
@@ -15,10 +15,11 @@ exports.handler = async (event) => {
         'Content-Type': 'application/json'
     };
 
-    if (path.includes('/sandbox/create')) {
+    if (path.includes('/create')) {
         return handleCreateRequest(paidRequest, corsHeaders);
-    } else if (path.includes('/sandbox/payments')) {
-        return handlePaymentRequest(token, amount, corsHeaders);
+    } else if (path.includes('/payments')) {
+        console.info(JSON.parse(event.body), corsHeaders)
+        return handlePaymentRequest(paymentRequest, corsHeaders);
     } else {
         return {
             statusCode: 404,
@@ -55,10 +56,9 @@ try {
 }
 }
 
-const handlePaymentRequest = async(event, corsHeaders) => {
-    const requestBody = JSON.parse(event.body);
+const handlePaymentRequest = async(data, corsHeaders) => {
     try {
-        const response = await axios.post('https://connect.squareup.com/v2/payments', requestBody, {
+        const response = await axios.post('https://connect.squareupsandbox.com/v2/payments', data, {
             headers: {
                 'Authorization': `Bearer ${process.env.SANDBOX_ACCESS_TOKEN}`,
                 'Content-Type': 'application/json',
