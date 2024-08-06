@@ -16,7 +16,7 @@ exports.handler = async (event) => {
     };
 
     if (path.includes('/create')) {
-        return handleCreateRequest(paidRequest, corsHeaders);
+        return handleCreateRequest(event, corsHeaders);
     } else if (path.includes('/payments')) {
         console.info(JSON.parse(event.body), corsHeaders)
         return handlePaymentRequest(paymentRequest, corsHeaders);
@@ -29,32 +29,49 @@ exports.handler = async (event) => {
     }
 };
 
-const handleCreateRequest = async(event, corsHeaders) =>{
-const requestBody = JSON.parse(event.body);
-const primaryKey = `${requestBody.programId}-${requestBody.email}-${requestBody.startDate}`;
-const params = {
-    TableName: 'trac-subs',
-    Item: {
-        id: primaryKey,
-        ...requestBody
+const handleCreateRequest = async (event, corsHeaders) => {
+    const requestBody = JSON.parse(event.body);
+
+    // Constructing the primary key more robustly
+    const primaryKey = `${requestBody.programId}-${requestBody.email}-${requestBody.startDate.split('T')[0]}`; // Ensure date is only the date part if datetime is used
+
+    const params = {
+        TableName: 'trac-subs',
+        Item: {
+            id: primaryKey, // primary key
+            programId: requestBody.programId,
+            name: requestBody.name,
+            company: requestBody.company,
+            title: requestBody.title,
+            phone: requestBody.phone,
+            email: requestBody.email,
+            subscriptionDuration: requestBody.subscriptionDuration,
+            startDate: requestBody.startDate,
+            paymentToken: requestBody.paymentToken,
+            payment_id: requestBody.payment_id, // Newly added fields
+            order_id: requestBody.order_id,
+            receipt_url: requestBody.receipt_url,
+            note: requestBody.note,
+            amount: requestBody.amount/100
+        }
+    };
+
+    try {
+        await dynamoDb.put(params).promise();
+        return {
+            statusCode: 200,
+            headers: corsHeaders,
+            body: JSON.stringify({ message: "Data inserted successfully" })
+        };
+    } catch (error) {
+        console.error('Error inserting data:', error);
+        return {
+            statusCode: 500,
+            headers: corsHeaders,
+            body: JSON.stringify({ message: "Failed to insert data", error: error.message })
+        };
     }
 };
-
-try {
-    await dynamoDb.put(params).promise();
-    return {
-        statusCode: 200,
-        headers: corsHeaders,
-        body: JSON.stringify({ message: "Data inserted successfully" })
-    };
-} catch (error) {
-    return {
-        statusCode: 500,
-        headers: corsHeaders,
-        body: JSON.stringify({ message: "Failed to insert data", error: error.message })
-    };
-}
-}
 
 const handlePaymentRequest = async(data, corsHeaders) => {
     try {

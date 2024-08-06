@@ -1,27 +1,25 @@
-import { useEffect, useState, useContext } from 'react'
+import { useEffect, useState, useContext, useRef } from 'react'
 import axios from 'axios'
 import ReactDatePicker from 'react-datepicker'
 import 'react-datepicker/dist/react-datepicker.css'
-import { toast } from 'react-toastify'
 import Modal from 'react-bootstrap/Modal'
 import Card from 'react-bootstrap/Card'
 import Form from 'react-bootstrap/Form'
 import { ProgramsContext } from '../../context/ProgramsContext'
-import { TracsContext } from '../../context/TracsContext'
 import ProgramInput from './ProgramInput'
 import Terms from './Terms'
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import SquareForm from './SquareForm'  // Import SquareForm
 
 const SubscriptionForm = () => {
-  const accessToken = 'EAAAEPo98hU3Eo7nv9Lh1J9L9FrvWz79jii4gmm5ciZw3f1noIFxMuxdjpGuwjDD'
-  const locationId = 'XK6VJKAS5R1ZM'
   const { programs, loadingPrograms } = useContext(ProgramsContext)
-  const { submitTrac } = useContext(TracsContext)
   const [show, setShow] = useState(false)
   const [cost, setCost] = useState()
   const [ programTitle, setProgramTitle ] = useState()
   const [termsOfUse, setTermsOfUse] = useState(false)
   const [ enableButton, setEnableButton ] = useState(false)
+  const toastId = useRef(null);
   const [formData, setFormData] = useState({
     programId: '',
     name: '',
@@ -47,6 +45,14 @@ const SubscriptionForm = () => {
     const isValid = Object.values(formData).every(value => value && value !== '')
     setEnableButton(termsOfUse && isValid)
   }, [formData, termsOfUse])
+
+    const updateToast = (message, options) => {
+      if (toast.isActive(toastId.current)) {
+        toast.update(toastId.current, { ...options, render: message });
+      } else {
+        toastId.current = toast(message, options);
+      }
+    }
 
   const onTextChange = (e) => {
     const { id, value } = e.target
@@ -75,22 +81,57 @@ const SubscriptionForm = () => {
     setProgramTitle(program.title)
   }
 
-  const handlePaymentSuccess = (paymentToken) => {
-    setFormData({ ...formData, paymentToken }); // Update formData with the payment token
-    submitFormData(); // Function to submit all data to DynamoDB
-  };
-
-  const submitFormData = async (formData) => {
-    console.log(formData)
-    try {
-      await submitTrac(formData); // Assuming submitTrac sends data to DynamoDB
-      toast.success('Subscription successful!');
-    } catch (error) {
-      toast.error('Failed to subscribe: ' + error.message);
+  const handlePaymentSuccess = (paymentData) => {
+    const { payment } = paymentData  // Assuming the API returns the payment data under a 'payment' key
+    const { id: payment_id, order_id, receipt_url } = payment
+    const amount = payment.amount_money.amount
+  
+    const dataToSubmit = {
+      ...formData,
+      payment_id,
+      order_id,
+      receipt_url,
+      note: payment.note,
+      amount
     }
-  };
-
-
+    updateToast('Payment successful, finalizing subscription...', { type: toast.TYPE.INFO });
+    toast.promise(
+      submitFormData(dataToSubmit),
+      {
+        info: 'Processing your subscription...',
+        success: 'Subscription successful!',
+        error: {
+          render({ data }) {
+            // This function returns the React element to display in the toast
+            return <div>Error: {data.message}</div>;
+          }
+        }
+      }
+    )}
+  
+  const submitFormData = async (data) => {
+    try {
+      const response = await axios.post('https://qd9pusq3ze.execute-api.us-east-1.amazonaws.com/sandbox/create', data)
+      if (response.status === 200) {
+        setTimeout(() => window.location.reload(), 5000)  // Refresh page after 5 seconds
+      } else {
+        throw new Error('Server responded with an error');
+      }
+    } catch (error) {
+      // You might want to handle different types of errors differently
+      // For example, checking for error.response can differentiate Axios errors from others
+      if (error.response) {
+        // Server responded with a status code that falls out of the range of 2xx
+        throw new Error(error.response.data.message || 'Failed to subscribe');
+      } else if (error.request) {
+        // The request was made but no response was received
+        throw new Error('No response received');
+      } else {
+        // Something happened in setting up the request that triggered an Error
+        throw new Error('Error setting up the request');
+      }
+    }
+  }
   
   if(loadingPrograms) return 'waiting...'
 
@@ -220,7 +261,6 @@ const SubscriptionForm = () => {
         <div style={{ display: cost ? 'block' : 'none' }}>
           <p>You will be charged: ${cost}</p>
         </div>
-        { console.log(programTitle)}
         <SquareForm 
           onPaymentSuccess={handlePaymentSuccess} 
           cost={cost}
@@ -228,6 +268,17 @@ const SubscriptionForm = () => {
           programTitle={programTitle}
         />
       </Card.Body>
+      <ToastContainer 
+        limit='1'
+        position="middle-center"
+        autoClose={5000}
+        hideProgressBar={true}
+        newestOnTop={true}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        pauseOnHover
+      />
     </Card>
   )
 }

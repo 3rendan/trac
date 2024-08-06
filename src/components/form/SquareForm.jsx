@@ -1,10 +1,11 @@
 import React, { useEffect, useRef, useState } from 'react'
 import axios from 'axios'
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const SquarePaymentForm = ({ cost, onPaymentSuccess, formData, programTitle }) => {
   const appId = 'sandbox-sq0idb-1Rc6WQaS0GHD8JmvpmaVOg' // SANDBOX
   const locationId = 'XK6VJKAS5R1ZM'
-  const accessToken = 'EAAAEPo98hU3Eo7nv9Lh1J9L9FrvWz79jii4gmm5ciZw3f1noIFxMuxdjpGuwjDD'
   const cardRef = useRef(null)
   const cardButtonRef = useRef(null)
   const [sdkReady, setSdkReady] = useState(false)
@@ -59,8 +60,6 @@ const SquarePaymentForm = ({ cost, onPaymentSuccess, formData, programTitle }) =
       throw new Error(errorMessage)
     }
   }
-
-  // const submitPayment = async (token, cost) => {
   //   console.log(token, cost)
   //   try {
   //       const response = await axios('https://qd9pusq3ze.execute-api.us-east-1.amazonaws.com/sandbox/payments', {
@@ -69,28 +68,26 @@ const SquarePaymentForm = ({ cost, onPaymentSuccess, formData, programTitle }) =
   //               'Content-Type': 'application/json'
   //           },
   //           body: JSON.stringify({ token, cost })
-  //       });
+  //       })
 
-  //       const data = await response.json();
+  //       const data = await response.json()
   //       if (response.ok) {
-  //           return { success: true, data: data };
+  //           return { success: true, data: data }
   //       } else {
-  //           throw new Error(data.error || 'Payment failed');
+  //           throw new Error(data.error || 'Payment failed')
   //       }
   //   } catch (error) {
-  //       return { success: false, error: error.message };
+  //       return { success: false, error: error.message }
   //   }
-  // };
+  // }
 
-  
   const handleSubmit = async (event) => {
     event.preventDefault();
-    console.log(event)
     if (!cardRef.current) {
       console.error('Card ref not set');
       return;
     }
-
+    toast.info('Submitting payment information')
     try {
       const tokenResult = await cardRef.current.tokenize();
       if (tokenResult.status !== 'OK') {
@@ -100,20 +97,18 @@ const SquarePaymentForm = ({ cost, onPaymentSuccess, formData, programTitle }) =
         source_id: tokenResult.token,
         idempotency_key: crypto.randomUUID(),
         amount_money: {
-          amount: cost*100, // Use the cost passed in from parent
+          amount: cost * 100,  // Convert cost to cents as required by many payment processors
           currency: 'USD'
         },
         note: `Payment by ${formData.name} for a carriage report subscription to ${programTitle} beginning on ${formData.startDate}, lasting for ${formData.subscriptionDuration}`
       };
-      console.log(paymentData)
-      console.log(JSON.stringify(paymentData))
-
-    //   // Post paymentData to your backend or payment processor
+  
       const paymentResponse = await axios.post('https://qd9pusq3ze.execute-api.us-east-1.amazonaws.com/sandbox/payments', paymentData);
-      console.log(await paymentResponse)
       if (paymentResponse.status === 200) {
-        onPaymentSuccess(paymentResponse.data);
+        toast.success('Payment successful, submitting form data.')
+        onPaymentSuccess(paymentResponse.data);  // Pass the entire payment response data to the callback
       } else {
+        toast.error('There was a problem with your payment, please try again.')
         throw new Error('Payment failed');
       }
     } catch (error) {
@@ -121,12 +116,25 @@ const SquarePaymentForm = ({ cost, onPaymentSuccess, formData, programTitle }) =
     }
   };
   
+  
   return (
     <form onSubmit={handleSubmit}>
       <div id='card-container'></div>
       <button ref={cardButtonRef} className='btn-pay' type='submit'>Pay { cost ? `$${cost}` : ''}</button>
+      <ToastContainer 
+        limit='1'
+        position="middle-center"
+        autoClose={3000}
+        hideProgressBar={true}
+        newestOnTop={true}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        // pauseOnHover
+      />
     </form>
-  );
+  )
 }
   
 
